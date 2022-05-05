@@ -21,7 +21,7 @@ libc = "0.2.123"
 macaddr = { version = "1.0.1", features = [ "serde_std" ] }
 nexus-client = { path = "../nexus-client" }
 omicron-common = { path = "../common" }
-p256 = "0.9.0"
+p256 = "0.10.1"
 percent-encoding = "2.1.0"
 progenitor = { git = "https://github.com/oxidecomputer/progenitor" }
 propolis-client = { git = "https://github.com/oxidecomputer/propolis", rev = "ec4f3a41a638ea6c3316a86f30f1895f4877f2ef" }
