@@ -1005,7 +1005,7 @@ dependencies = [
  "byteorder",
  "chrono",
  "diesel_derives",
- "ipnetwork",
+ "ipnetwork 0.18.0",
  "itoa 1.0.1",
  "libc",
  "pq-sys",
@@ -2180,6 +2180,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ipnetwork"
+version = "0.19.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f84f1612606f3753f205a4e9a2efd6fe5b4c573a6269b2cc6c3003d44a0d127"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "itertools"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2672,7 +2681,7 @@ dependencies = [
  "futures",
  "http",
  "hyper",
- "ipnetwork",
+ "ipnetwork 0.19.0",
  "macaddr",
  "parse-display",
  "progenitor",
@@ -2769,7 +2778,7 @@ dependencies = [
  "http",
  "httptest",
  "hyper",
- "ipnetwork",
+ "ipnetwork 0.19.0",
  "lazy_static",
  "libc",
  "macaddr",
@@ -2864,7 +2873,7 @@ dependencies = [
  "expectorate",
  "futures",
  "http",
- "ipnetwork",
+ "ipnetwork 0.19.0",
  "libc",
  "macaddr",
  "mockall",
@@ -5546,7 +5555,7 @@ version = "1.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ee73e6e4924fe940354b8d4d98cad5231175d615cd855b758adc658c0aac6a0"
 dependencies = [
- "cfg-if 0.1.10",
+ "cfg-if 1.0.0",
  "rand 0.8.5",
  "static_assertions",
 ]
