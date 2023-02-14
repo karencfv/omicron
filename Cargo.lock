@@ -1608,7 +1608,7 @@ checksum = "1435fa1053d8b2fbbe9be7e97eca7f33d37b28409959813daefc1446a14247f1"
 [[package]]
 name = "dropshot"
 version = "0.9.1-dev"
-source = "git+https://github.com/oxidecomputer/dropshot?branch=main#85474dd485425f282975dda7cd0b22ec24e5e06d"
+source = "git+https://github.com/oxidecomputer/dropshot?branch=main#406eaf62f1093859771a621de27ab3beeca0247a"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -1640,7 +1640,7 @@ dependencies = [
  "slog-term",
  "tokio",
  "tokio-rustls",
- "toml 0.7.1",
+ "toml 0.7.2",
  "usdt",
  "uuid",
  "version_check",
@@ -1649,7 +1649,7 @@ dependencies = [
 [[package]]
 name = "dropshot_endpoint"
 version = "0.9.1-dev"
-source = "git+https://github.com/oxidecomputer/dropshot?branch=main#85474dd485425f282975dda7cd0b22ec24e5e06d"
+source = "git+https://github.com/oxidecomputer/dropshot?branch=main#406eaf62f1093859771a621de27ab3beeca0247a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -6889,9 +6889,9 @@ dependencies = [
 
 [[package]]
 name = "toml"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "772c1426ab886e7362aedf4abc9c0d1348a979517efedfc25862944d10137af0"
+checksum = "f7afcae9e3f0fe2c370fd4657108972cbb2fa9db1b9f84849cefd80741b01cb6"
 dependencies = [
  "serde",
  "serde_spanned",
@@ -6910,9 +6910,9 @@ dependencies = [
 
 [[package]]
 name = "toml_edit"
-version = "0.19.1"
+version = "0.19.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90a238ee2e6ede22fb95350acc78e21dc40da00bb66c0334bde83de4ed89424e"
+checksum = "5e6a7712b49e1775fb9a7b998de6635b299237f48b404dde71704f2e0e7f37e5"
 dependencies = [
  "indexmap",
  "nom8",
