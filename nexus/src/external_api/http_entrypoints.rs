@@ -2817,14 +2817,12 @@ async fn otel_experiment(
         // You can set keys via constants or KeyValue::new()
         const RESOURCE_KEY: Key = Key::from_static_str("resource-type");
 
-        lazy_static::lazy_static! {
-            static ref COMMON_ATTRIBUTES: [KeyValue; 4] = [
-                RESOURCE_KEY.string("instance"),
-                KeyValue::new("version", "1.0"),
-                KeyValue::new("parent-id", "08b8b065-0a39-4440-947c-c49b2f080384"),
-                KeyValue::new("resource-id", "c88db8d8-ab55-11ed-afa1-0242ac120002"),
-            ];
-        }
+        let common_attributes: [KeyValue; 4] = [
+            RESOURCE_KEY.string("disk"),
+            KeyValue::new("version", "1.0"),
+            KeyValue::new("parent-id", authz_disk.parent().id().to_string()),
+            KeyValue::new("resource-id", authz_disk.id().to_string()),
+        ];
 
         // Example of metric that is recorded every second
         // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
@@ -2835,13 +2833,13 @@ async fn otel_experiment(
             .init();
         meter
             .register_callback(move |cx| {
-                gauge.observe(cx, random::<f64>(), COMMON_ATTRIBUTES.as_ref())
+                gauge.observe(cx, random::<f64>(), common_attributes.as_ref())
             })
             .unwrap();
 
         // Example of a metric that is exported only once when the binary is run.
-        let histogram = meter.f64_histogram("my-grpc-metric-2").init();
-        histogram.record(&cx, 5.5, COMMON_ATTRIBUTES.as_ref());
+        //    let histogram = meter.f64_histogram("my-grpc-metric-2").init();
+        //  histogram.record(&cx, 5.5, COMMON_ATTRIBUTES.as_ref());
 
         // wait for 1 minute to see "my-grpc-metric" metrics being pushed via OTLP according to "with_period".
         tokio::time::sleep(Duration::from_secs(60)).await;
