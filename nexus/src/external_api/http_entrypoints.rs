@@ -364,6 +364,9 @@ pub fn external_api() -> NexusApiDescription {
         api.register(group_list)?;
         api.register(group_list_v1)?;
 
+        // TODO: Removeme after experimental feature is finished
+        api.register(otel_experiment)?;
+
         // Console API operations
         api.register(console_api::login_begin)?;
         api.register(console_api::login_local)?;
@@ -2751,6 +2754,50 @@ async fn disk_metrics_list(
             .await?;
 
         Ok(HttpResponseOk(result))
+    };
+    apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
+}
+
+// TODO: Removeme after experiment is done
+/// Path parameters for OTEL experiment requests
+#[derive(Deserialize, JsonSchema)]
+struct OtelPathParam {
+    disk_id: Uuid,
+}
+
+// TODO: Removeme after experiment is done
+/// OTEL experimental endpoint
+#[endpoint {
+    method = GET,
+    path = "/otel/{disk_id}",
+    tags = ["disks"],
+}]
+async fn otel_experiment(
+    rqctx: RequestContext<Arc<ServerContext>>,
+    path_params: Path<OtelPathParam>,
+) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
+{
+    let apictx = rqctx.context();
+    let handler = async {
+        let nexus = &apictx.nexus;
+        let path = path_params.into_inner();
+        let disk_selector =
+            params::DiskSelector::new(None, None, path.disk_id.into());
+        let opctx = OpContext::for_external_api(&rqctx).await?;
+        let (.., authz_disk) = nexus
+            .disk_lookup(&opctx, &disk_selector)?
+            .lookup_for(authz::Action::Read)
+            .await?;
+
+        let result = nexus
+            .select_timeseries_otel_experiment(&[&format!(
+                "upstairs_uuid=={}",
+                authz_disk.id()
+            )])
+            .await?;
+
+        Ok(HttpResponseOk(result))
+        //   Ok(HttpResponseOk())
     };
     apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
 }

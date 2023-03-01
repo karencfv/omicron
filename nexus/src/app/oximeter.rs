@@ -326,6 +326,65 @@ impl super::Nexus {
         .unwrap())
     }
 
+    // TODO: Removeme after experiment is done
+    pub async fn select_timeseries_otel_experiment(
+        &self,
+        criteria: &[&str],
+    ) -> Result<std::vec::Vec<Measurement>, Error> {
+        // TODO: actually let this be modified
+        let timeseries_name = "crucible_upstairs:read_bytes";
+        //let criteria = &[&format!("upstairs_uuid=={}", disk_id)];
+
+        let timeseries_list = self
+            .timeseries_client
+            .get()
+            .await
+            .map_err(|e| {
+                Error::internal_error(&format!(
+                    "Cannot access timeseries DB: {}",
+                    e
+                ))
+            })?
+            .select_timeseries_with(
+                timeseries_name,
+                criteria,
+                // TODO: Needs at least a start time otherwise it shows from beginning of time?
+                None, // Some(start_time),
+                None, // Some(end_time),
+                None, //Some(limit),
+            )
+            .await
+            .or_else(|err| {
+                // If the timeseries name exists in the API, but not in Clickhouse,
+                // it might just not have been populated yet.
+                match err {
+                    oximeter_db::Error::TimeseriesNotFound(_) => Ok(vec![]),
+                    _ => Err(err),
+                }
+            })
+            .map_err(map_oximeter_err)?;
+
+        if timeseries_list.len() > 1 {
+            return Err(Error::internal_error(&format!(
+                "expected 1 timeseries but got {} ({:?} {:?})",
+                timeseries_list.len(),
+                timeseries_name,
+                criteria
+            )));
+        }
+
+        // If we received no data, exit early.
+        let timeseries =
+            if let Some(timeseries) = timeseries_list.into_iter().next() {
+                timeseries
+            } else {
+                return Ok(Vec::new());
+            };
+
+        // TODO: Report the raw datum only, and set datum type separately
+        Ok(timeseries.measurements)
+    }
+
     // Internal helper to build an Oximeter client from its ID and address (common data between
     // model type and the API type).
     fn build_oximeter_client(
