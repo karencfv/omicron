@@ -82,7 +82,6 @@ use opentelemetry::sdk::metrics::controllers::BasicController;
 use opentelemetry::sdk::metrics::selectors;
 use opentelemetry::{metrics, Context, Key, KeyValue};
 use opentelemetry_otlp::{ExportConfig, WithExportConfig};
-use rand::random;
 use std::time::Duration;
 
 type NexusApiDescription = ApiDescription<Arc<ServerContext>>;
@@ -2808,44 +2807,44 @@ async fn otel_experiment(
             .await?;
 
         // OTEL code
-        let metrics_controller = init_otel_metrics_pipeline().unwrap();
-        let cx = Context::new();
-
-        // Instrumentation scope
-        let meter = global::meter_with_version("omicron", Some("v1"), None);
-
-        // You can set keys via constants or KeyValue::new()
-        const RESOURCE_KEY: Key = Key::from_static_str("resource-type");
-
-        let common_attributes: [KeyValue; 4] = [
-            RESOURCE_KEY.string("disk"),
-            KeyValue::new("version", "1.0"),
-            KeyValue::new("parent-id", authz_disk.parent().id().to_string()),
-            KeyValue::new("resource-id", authz_disk.id().to_string()),
-        ];
-
-        // Example of metric that is recorded every second
-        // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
-        let gauge = meter
-            .f64_observable_gauge("my-grpc-metric")
-            .with_description("A gauge set to a random value")
-            .with_unit(Unit::new("GiB"))
-            .init();
-        meter
-            .register_callback(move |cx| {
-                gauge.observe(cx, random::<f64>(), common_attributes.as_ref())
-            })
-            .unwrap();
-
-        // Example of a metric that is exported only once when the binary is run.
-        //    let histogram = meter.f64_histogram("my-grpc-metric-2").init();
-        //  histogram.record(&cx, 5.5, COMMON_ATTRIBUTES.as_ref());
-
-        // wait for 1 minute to see "my-grpc-metric" metrics being pushed via OTLP according to "with_period".
-        tokio::time::sleep(Duration::from_secs(60)).await;
-
-        metrics_controller.stop(&cx).unwrap();
-        // end of OTEL code
+        //let metrics_controller = init_otel_metrics_pipeline().unwrap();
+        //let cx = Context::new();
+        //
+        //  // Instrumentation scope
+        //let meter = global::meter_with_version("omicron", Some("v1"), None);
+        //
+        //  // You can set keys via constants or KeyValue::new()
+        //        const RESOURCE_KEY: Key = Key::from_static_str("resource-type");
+        //
+        //   let common_attributes: [KeyValue; 4] = [
+        //    RESOURCE_KEY.string("disk"),
+        //    KeyValue::new("version", "1.0"),
+        //    KeyValue::new("parent-id", authz_disk.parent().id().to_string()),
+        //            KeyValue::new("resource-id", authz_disk.id().to_string()),
+        //];
+        //
+        //  // These unwraps are horrible, handle better
+        //let datum = i64::from(result[0].datum().value().unwrap());
+        //let value = u64::try_from(datum).unwrap();
+        //
+        //  // Example of metric that is recorded every second
+        //        // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
+        //let gauge = meter
+        //    .u64_counter("my-grpc-metric")
+        //    .with_description("A gauge set to a random value")
+        //            .with_unit(Unit::new("bytes"))
+        //    .init();
+        //meter
+        //    .register_callback(move |cx| {
+        //                gauge.add(cx, value, common_attributes.as_ref())
+        //            })
+        //         .unwrap();
+        //
+        //  // wait for 1 minute to see "my-grpc-metric" metrics being pushed via OTLP according to "with_period".
+        //        tokio::time::sleep(Duration::from_secs(60)).await;
+        //
+        //   metrics_controller.stop(&cx).unwrap();
+        //    // end of OTEL code
 
         Ok(HttpResponseOk(result))
         //   Ok(HttpResponseOk())

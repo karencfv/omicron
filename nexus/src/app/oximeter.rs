@@ -35,6 +35,8 @@ use std::time::Duration;
 use tokio::sync::Mutex;
 use uuid::Uuid;
 
+use chrono::Utc;
+
 /// A client which knows how to connect to Clickhouse, but does so
 /// only when a request is actually made.
 ///
@@ -335,6 +337,9 @@ impl super::Nexus {
         let timeseries_name = "crucible_upstairs:read_bytes";
         //let criteria = &[&format!("upstairs_uuid=={}", disk_id)];
 
+        let start_time =
+            Timestamp::Inclusive(Utc::now() - chrono::Duration::seconds(1));
+
         let timeseries_list = self
             .timeseries_client
             .get()
@@ -349,7 +354,8 @@ impl super::Nexus {
                 timeseries_name,
                 criteria,
                 // TODO: Needs at least a start time otherwise it shows from beginning of time?
-                None, // Some(start_time),
+                // TODO: "now" doesn't work very well, need to find solution
+                Some(start_time),
                 None, // Some(end_time),
                 None, //Some(limit),
             )
