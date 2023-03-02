@@ -11,6 +11,7 @@ disk_view                                /organizations/{organization_name}/proj
 disk_view_by_id                          /by-id/disks/{id}
 disk_view_v1                             /v1/disks/{disk}
 otel_experiment                          /otel/{disk_id}
+otel_raw_experiment                      /raw/{disk_id}
 
 API operations found with tag "hidden"
 OPERATION ID                             URL PATH

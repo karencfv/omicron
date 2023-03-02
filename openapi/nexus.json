@@ -5032,6 +5032,15 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "in": "query",
+            "name": "seconds",
+            "schema": {
+              "nullable": true,
+              "type": "integer",
+              "format": "int64"
+            }
           }
         ],
         "responses": {
@@ -5122,6 +5131,57 @@
           }
         },
         "deprecated": true
+      }
+    },
+    "/raw/{disk_id}": {
+      "get": {
+        "tags": [
+          "disks"
+        ],
+        "summary": "OTEL experimental endpoint",
+        "operationId": "otel_raw_experiment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "disk_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "seconds",
+            "schema": {
+              "nullable": true,
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Array_of_Measurement",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Measurement"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
       }
     },
     "/roles": {

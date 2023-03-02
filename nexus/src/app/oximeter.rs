@@ -332,13 +332,21 @@ impl super::Nexus {
     pub async fn select_timeseries_otel_experiment(
         &self,
         criteria: &[&str],
+        seconds: Option<i64>,
     ) -> Result<std::vec::Vec<Measurement>, Error> {
         // TODO: actually let this be modified
         let timeseries_name = "crucible_upstairs:read_bytes";
         //let criteria = &[&format!("upstairs_uuid=={}", disk_id)];
 
-        let start_time =
-            Timestamp::Inclusive(Utc::now() - chrono::Duration::seconds(1));
+        // This sometimes works and sometimes doesn't, I'm guessing it's depending how often metrics are stored in clickhouse
+        let start_time;
+        if let Some(sec) = seconds {
+            start_time = Some(Timestamp::Inclusive(
+                Utc::now() - chrono::Duration::seconds(sec),
+            ));
+        } else {
+            start_time = None;
+        }
 
         let timeseries_list = self
             .timeseries_client
@@ -355,7 +363,7 @@ impl super::Nexus {
                 criteria,
                 // TODO: Needs at least a start time otherwise it shows from beginning of time?
                 // TODO: "now" doesn't work very well, need to find solution
-                Some(start_time),
+                start_time,
                 None, // Some(end_time),
                 None, //Some(limit),
             )

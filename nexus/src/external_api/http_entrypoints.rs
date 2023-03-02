@@ -376,6 +376,7 @@ pub fn external_api() -> NexusApiDescription {
 
         // TODO: Removeme after experimental feature is finished
         api.register(otel_experiment)?;
+        api.register(otel_raw_experiment)?;
 
         // Console API operations
         api.register(console_api::login_begin)?;
@@ -2775,6 +2776,12 @@ struct OtelPathParam {
     disk_id: Uuid,
 }
 
+/// Query parameters for OTEL experiment requests
+#[derive(Deserialize, JsonSchema)]
+struct OtelQueryParam {
+    seconds: Option<i64>,
+}
+
 // TODO: Removeme after experiment is done
 /// OTEL experimental endpoint
 #[endpoint {
@@ -2785,12 +2792,14 @@ struct OtelPathParam {
 async fn otel_experiment(
     rqctx: RequestContext<Arc<ServerContext>>,
     path_params: Path<OtelPathParam>,
+    query_params: Query<OtelQueryParam>,
 ) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
 {
     let apictx = rqctx.context();
     let handler = async {
         let nexus = &apictx.nexus;
         let path = path_params.into_inner();
+        let query = query_params.into_inner();
         let disk_selector =
             params::DiskSelector::new(None, None, path.disk_id.into());
         let opctx = OpContext::for_external_api(&rqctx).await?;
@@ -2800,51 +2809,52 @@ async fn otel_experiment(
             .await?;
 
         let result = nexus
-            .select_timeseries_otel_experiment(&[&format!(
-                "upstairs_uuid=={}",
-                authz_disk.id()
-            )])
+            .select_timeseries_otel_experiment(
+                &[&format!("upstairs_uuid=={}", authz_disk.id())],
+                query.seconds,
+            )
             .await?;
 
+        // For tomorrow: Make two endpoints out if this to make it easier, also add start time params
         // OTEL code
-        //let metrics_controller = init_otel_metrics_pipeline().unwrap();
-        //let cx = Context::new();
-        //
-        //  // Instrumentation scope
-        //let meter = global::meter_with_version("omicron", Some("v1"), None);
-        //
-        //  // You can set keys via constants or KeyValue::new()
-        //        const RESOURCE_KEY: Key = Key::from_static_str("resource-type");
-        //
-        //   let common_attributes: [KeyValue; 4] = [
-        //    RESOURCE_KEY.string("disk"),
-        //    KeyValue::new("version", "1.0"),
-        //    KeyValue::new("parent-id", authz_disk.parent().id().to_string()),
-        //            KeyValue::new("resource-id", authz_disk.id().to_string()),
-        //];
-        //
-        //  // These unwraps are horrible, handle better
-        //let datum = i64::from(result[0].datum().value().unwrap());
-        //let value = u64::try_from(datum).unwrap();
-        //
-        //  // Example of metric that is recorded every second
-        //        // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
-        //let gauge = meter
-        //    .u64_counter("my-grpc-metric")
-        //    .with_description("A gauge set to a random value")
-        //            .with_unit(Unit::new("bytes"))
-        //    .init();
-        //meter
-        //    .register_callback(move |cx| {
-        //                gauge.add(cx, value, common_attributes.as_ref())
-        //            })
-        //         .unwrap();
-        //
-        //  // wait for 1 minute to see "my-grpc-metric" metrics being pushed via OTLP according to "with_period".
-        //        tokio::time::sleep(Duration::from_secs(60)).await;
-        //
-        //   metrics_controller.stop(&cx).unwrap();
-        //    // end of OTEL code
+        let metrics_controller = init_otel_metrics_pipeline().unwrap();
+        let cx = Context::new();
+
+        // Instrumentation scope
+        let meter = global::meter_with_version("omicron", Some("v1"), None);
+
+        // You can set keys via constants or KeyValue::new()
+        const RESOURCE_KEY: Key = Key::from_static_str("resource-type");
+
+        let common_attributes: [KeyValue; 4] = [
+            RESOURCE_KEY.string("disk"),
+            KeyValue::new("version", "1.0"),
+            KeyValue::new("parent-id", authz_disk.parent().id().to_string()),
+            KeyValue::new("resource-id", authz_disk.id().to_string()),
+        ];
+
+        // These unwraps are horrible, handle better
+        let datum = i64::from(result[0].datum().value().unwrap());
+        let value = u64::try_from(datum).unwrap();
+
+        // Example of metric that is recorded every second
+        // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
+        let gauge = meter
+            .u64_counter("my-grpc-metric")
+            .with_description("A gauge set to a random value")
+            .with_unit(Unit::new("bytes"))
+            .init();
+        meter
+            .register_callback(move |cx| {
+                gauge.add(cx, value, common_attributes.as_ref())
+            })
+            .unwrap();
+
+        // wait for 1 minute to see "my-grpc-metric" metrics being pushed via OTLP according to "with_period".
+        tokio::time::sleep(Duration::from_secs(60)).await;
+
+        metrics_controller.stop(&cx).unwrap();
+        // end of OTEL code
 
         Ok(HttpResponseOk(result))
         //   Ok(HttpResponseOk())
@@ -2872,6 +2882,45 @@ fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
         // Sets the metric sampling frequency
         .with_period(Duration::from_secs(1))
         .build()
+}
+
+// TODO: Removeme after experiment is done
+/// OTEL experimental endpoint
+#[endpoint {
+    method = GET,
+    path = "/raw/{disk_id}",
+    tags = ["disks"],
+}]
+async fn otel_raw_experiment(
+    rqctx: RequestContext<Arc<ServerContext>>,
+    path_params: Path<OtelPathParam>,
+    query_params: Query<OtelQueryParam>,
+) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
+{
+    let apictx = rqctx.context();
+    let handler = async {
+        let nexus = &apictx.nexus;
+        let path = path_params.into_inner();
+        let query = query_params.into_inner();
+        let disk_selector =
+            params::DiskSelector::new(None, None, path.disk_id.into());
+        let opctx = OpContext::for_external_api(&rqctx).await?;
+        let (.., authz_disk) = nexus
+            .disk_lookup(&opctx, &disk_selector)?
+            .lookup_for(authz::Action::Read)
+            .await?;
+
+        let result = nexus
+            .select_timeseries_otel_experiment(
+                &[&format!("upstairs_uuid=={}", authz_disk.id())],
+                query.seconds,
+            )
+            .await?;
+
+        Ok(HttpResponseOk(result))
+        //   Ok(HttpResponseOk())
+    };
+    apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
 }
 
 // Instances
