@@ -80,7 +80,7 @@ use opentelemetry::runtime;
 use opentelemetry::sdk::export::metrics::aggregation::cumulative_temporality_selector;
 use opentelemetry::sdk::metrics::controllers::BasicController;
 use opentelemetry::sdk::metrics::selectors;
-use opentelemetry::{metrics, Context, Key, KeyValue};
+use opentelemetry::{metrics, Context, KeyValue};
 use opentelemetry_otlp::{ExportConfig, WithExportConfig};
 use std::time::Duration;
 
@@ -2793,8 +2793,9 @@ async fn otel_experiment(
     rqctx: RequestContext<Arc<ServerContext>>,
     path_params: Path<OtelPathParam>,
     query_params: Query<OtelQueryParam>,
-) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
-{
+    // TODO: Temporary response. Eventually we'll want something like WebsocketChannelResult
+    // to represent shutting down a connection gracefully
+) -> Result<HttpResponseAccepted<&'static str>, HttpError> {
     let apictx = rqctx.context();
     let handler = async {
         let nexus = &apictx.nexus;
@@ -2815,7 +2816,6 @@ async fn otel_experiment(
             )
             .await?;
 
-        // For tomorrow: Make two endpoints out if this to make it easier, also add start time params
         // OTEL code
         let metrics_controller = init_otel_metrics_pipeline().unwrap();
         let cx = Context::new();
@@ -2823,30 +2823,36 @@ async fn otel_experiment(
         // Instrumentation scope
         let meter = global::meter_with_version("omicron", Some("v1"), None);
 
-        // You can set keys via constants or KeyValue::new()
-        const RESOURCE_KEY: Key = Key::from_static_str("resource-type");
-
-        let common_attributes: [KeyValue; 4] = [
-            RESOURCE_KEY.string("disk"),
+        // All attributes and names follow OpenTelemetry semantic conventions
+        // https://opentelemetry.io/docs/reference/specification/metrics/semantic_conventions/system-metrics/#systemdisk---disk-controller-metrics
+        let common_attributes: [KeyValue; 5] = [
+            KeyValue::new("device", authz_disk.id().to_string()),
+            KeyValue::new("direction", "read"),
+            KeyValue::new("resource.type", "disk"),
             KeyValue::new("version", "1.0"),
-            KeyValue::new("parent-id", authz_disk.parent().id().to_string()),
-            KeyValue::new("resource-id", authz_disk.id().to_string()),
+            KeyValue::new("parent", authz_disk.parent().id().to_string()),
         ];
 
         // These unwraps are horrible, handle better
-        let datum = i64::from(result[0].datum().value().unwrap());
+        // OpenTelemetry uses u64 as a convention for cumulative metrics.
+        // Might be worth it for us to use u64 as well
+        // On another note, it's really hacky to get the last item from a vector formed
+        // from all the reported metrics in the last "n" seconds, need to find a better
+        // way to query this.
+        let last_datum = result.last();
+        let datum = i64::from(last_datum.unwrap().datum().value().unwrap());
         let value = u64::try_from(datum).unwrap();
 
         // Example of metric that is recorded every second
         // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
-        let gauge = meter
-            .u64_counter("my-grpc-metric")
-            .with_description("A gauge set to a random value")
-            .with_unit(Unit::new("bytes"))
+        let counter = meter
+            .u64_counter("system.disk.io")
+            .with_description("total number of bytes read at a given time")
+            .with_unit(Unit::new("By"))
             .init();
         meter
             .register_callback(move |cx| {
-                gauge.add(cx, value, common_attributes.as_ref())
+                counter.add(cx, value, common_attributes.as_ref())
             })
             .unwrap();
 
@@ -2856,15 +2862,20 @@ async fn otel_experiment(
         metrics_controller.stop(&cx).unwrap();
         // end of OTEL code
 
-        Ok(HttpResponseOk(result))
-        //   Ok(HttpResponseOk())
+        //   Ok(HttpResponseOk(result))
+        Ok(HttpResponseAccepted(
+            "Metrics streamed during one minute for testing purposes",
+        ))
     };
     apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
 }
 
 // TODO: Removeme after experiment
 fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
+    // A customer may have different collectors for different team's observability setup
+    // It makes sense to be able to set the export config in each endpoint
     let export_config = ExportConfig {
+        // TODO: Take the collector endpoint from the API endpoint
         endpoint: "http://localhost:4317".to_string(),
         ..ExportConfig::default()
     };

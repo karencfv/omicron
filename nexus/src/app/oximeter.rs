@@ -336,7 +336,6 @@ impl super::Nexus {
     ) -> Result<std::vec::Vec<Measurement>, Error> {
         // TODO: actually let this be modified
         let timeseries_name = "crucible_upstairs:read_bytes";
-        //let criteria = &[&format!("upstairs_uuid=={}", disk_id)];
 
         // This sometimes works and sometimes doesn't, I'm guessing it's depending how often metrics are stored in clickhouse
         let start_time;
@@ -361,8 +360,6 @@ impl super::Nexus {
             .select_timeseries_with(
                 timeseries_name,
                 criteria,
-                // TODO: Needs at least a start time otherwise it shows from beginning of time?
-                // TODO: "now" doesn't work very well, need to find solution
                 start_time,
                 None, // Some(end_time),
                 None, //Some(limit),
