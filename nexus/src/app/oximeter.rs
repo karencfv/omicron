@@ -361,6 +361,7 @@ impl super::Nexus {
                 timeseries_name,
                 criteria,
                 start_time,
+                // TODO: Could potentially set end_time Now+Inclusive and a limit od one record, instead of sampling from last second(s)
                 None, // Some(end_time),
                 None, //Some(limit),
             )
