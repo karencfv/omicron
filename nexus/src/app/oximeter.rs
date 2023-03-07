@@ -332,20 +332,9 @@ impl super::Nexus {
     pub async fn select_timeseries_otel_experiment(
         &self,
         criteria: &[&str],
-        seconds: Option<i64>,
     ) -> Result<std::vec::Vec<Measurement>, Error> {
         // TODO: actually let this be modified
         let timeseries_name = "crucible_upstairs:read_bytes";
-
-        // This sometimes works and sometimes doesn't, I'm guessing it's depending how often metrics are stored in clickhouse
-        let start_time;
-        if let Some(sec) = seconds {
-            start_time = Some(Timestamp::Inclusive(
-                Utc::now() - chrono::Duration::seconds(sec),
-            ));
-        } else {
-            start_time = None;
-        }
 
         let timeseries_list = self
             .timeseries_client
@@ -360,7 +349,7 @@ impl super::Nexus {
             .select_timeseries_with(
                 timeseries_name,
                 criteria,
-                start_time,
+                None,
                 // TODO: Could potentially set end_time Now+Inclusive and a limit od one record, instead of sampling from last second(s)
                 Some(Timestamp::Inclusive(Utc::now())), // None,
                 Some(NonZeroU32::new(1).unwrap()),      //None,

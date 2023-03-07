@@ -2779,7 +2779,7 @@ struct OtelPathParam {
 /// Query parameters for OTEL experiment requests
 #[derive(Deserialize, JsonSchema)]
 struct OtelQueryParam {
-    seconds: Option<i64>,
+    seconds: Option<u64>,
 }
 
 // TODO: Removeme after experiment is done
@@ -2810,10 +2810,10 @@ async fn otel_experiment(
             .await?;
 
         let result = nexus
-            .select_timeseries_otel_experiment(
-                &[&format!("upstairs_uuid=={}", authz_disk.id())],
-                query.seconds,
-            )
+            .select_timeseries_otel_experiment(&[&format!(
+                "upstairs_uuid=={}",
+                authz_disk.id()
+            )])
             .await?;
 
         // OTEL code
@@ -2856,15 +2856,20 @@ async fn otel_experiment(
             })
             .unwrap();
 
-        // wait for 1 minute to see "my-grpc-metric" metrics being pushed via OTLP according to "with_period".
-        tokio::time::sleep(Duration::from_secs(60)).await;
+        // stream metrics only for a designated amount of seconds.
+        if let Some(seconds) = query.seconds {
+            tokio::time::sleep(Duration::from_secs(seconds)).await;
 
-        metrics_controller.stop(&cx).unwrap();
+            metrics_controller.stop(&cx).unwrap();
+
+            return Ok(HttpResponseAccepted(
+                "Metric streaming for testing stopped",
+            ));
+        }
         // end of OTEL code
 
-        //   Ok(HttpResponseOk(result))
         Ok(HttpResponseAccepted(
-            "Metrics streamed during one minute for testing purposes",
+            "Metric streaming to OTEL collector at http://localhost:4317",
         ))
     };
     apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
@@ -2905,14 +2910,12 @@ fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
 async fn otel_raw_experiment(
     rqctx: RequestContext<Arc<ServerContext>>,
     path_params: Path<OtelPathParam>,
-    query_params: Query<OtelQueryParam>,
 ) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
 {
     let apictx = rqctx.context();
     let handler = async {
         let nexus = &apictx.nexus;
         let path = path_params.into_inner();
-        let query = query_params.into_inner();
         let disk_selector =
             params::DiskSelector::new(None, None, path.disk_id.into());
         let opctx = OpContext::for_external_api(&rqctx).await?;
@@ -2922,10 +2925,10 @@ async fn otel_raw_experiment(
             .await?;
 
         let result = nexus
-            .select_timeseries_otel_experiment(
-                &[&format!("upstairs_uuid=={}", authz_disk.id())],
-                query.seconds,
-            )
+            .select_timeseries_otel_experiment(&[&format!(
+                "upstairs_uuid=={}",
+                authz_disk.id()
+            )])
             .await?;
 
         Ok(HttpResponseOk(result))
