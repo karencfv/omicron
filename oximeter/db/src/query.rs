@@ -628,7 +628,7 @@ impl SelectQuery {
                 "timeseries_name = '{timeseries_name}'",
                 "{key_clause}",
                 "{timestamp_clause}",
-                "ORDER BY (timeseries_name, timeseries_key, timestamp) ",
+                "ORDER BY (timeseries_name, timeseries_key, timestamp) DESC ", // TODO: Make this "DESC" optional
                 "{pagination_clause}",
                 "FORMAT {fmt};",
             ),

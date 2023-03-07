@@ -362,8 +362,8 @@ impl super::Nexus {
                 criteria,
                 start_time,
                 // TODO: Could potentially set end_time Now+Inclusive and a limit od one record, instead of sampling from last second(s)
-                None, // Some(end_time),
-                None, //Some(limit),
+                Some(Timestamp::Inclusive(Utc::now())), // None,
+                Some(NonZeroU32::new(1).unwrap()),      //None,
             )
             .await
             .or_else(|err| {
