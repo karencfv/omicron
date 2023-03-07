@@ -21,7 +21,7 @@ use omicron_common::api::external::PaginationOrder;
 use omicron_common::api::internal::nexus;
 use omicron_common::backoff;
 use oximeter_client::Client as OximeterClient;
-use oximeter_db::query::Timestamp;
+use oximeter_db::query::{Order, Timestamp};
 use oximeter_db::Measurement;
 use oximeter_db::TimeseriesSchema;
 use oximeter_db::TimeseriesSchemaPaginationParams;
@@ -286,6 +286,7 @@ impl super::Nexus {
                 Some(start_time),
                 Some(end_time),
                 Some(limit),
+                None,
             )
             .await
             .or_else(|err| {
@@ -346,13 +347,14 @@ impl super::Nexus {
                     e
                 ))
             })?
+            // Retrieve only the last measurement
             .select_timeseries_with(
                 timeseries_name,
                 criteria,
                 None,
-                // TODO: Could potentially set end_time Now+Inclusive and a limit od one record, instead of sampling from last second(s)
                 Some(Timestamp::Inclusive(Utc::now())), // None,
                 Some(NonZeroU32::new(1).unwrap()),      //None,
+                Some(Order::Descending),
             )
             .await
             .or_else(|err| {
