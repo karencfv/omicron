@@ -5039,7 +5039,8 @@
             "schema": {
               "nullable": true,
               "type": "integer",
-              "format": "int64"
+              "format": "uint64",
+              "minimum": 0
             }
           }
         ],
@@ -5145,15 +5146,6 @@
             "schema": {
               "type": "string",
               "format": "uuid"
-            }
-          },
-          {
-            "in": "query",
-            "name": "seconds",
-            "schema": {
-              "nullable": true,
-              "type": "integer",
-              "format": "int64"
             }
           }
         ],
