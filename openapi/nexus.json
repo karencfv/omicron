@@ -5016,13 +5016,13 @@
         "x-dropshot-pagination": true
       }
     },
-    "/otel/{disk_id}": {
+    "/otel/{disk_id}/metric/{metric_name}": {
       "get": {
         "tags": [
           "disks"
         ],
-        "summary": "OTEL experimental endpoint",
-        "operationId": "otel_experiment",
+        "summary": "OTEL prototype endpoint",
+        "operationId": "disk_metrics_stream",
         "parameters": [
           {
             "in": "path",
@@ -5031,6 +5031,14 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "metric_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DiskMetricName"
             }
           },
           {
@@ -5131,12 +5139,12 @@
         "deprecated": true
       }
     },
-    "/raw/{disk_id}": {
+    "/raw/{disk_id}/metric/{metric_name}": {
       "get": {
         "tags": [
           "disks"
         ],
-        "summary": "OTEL experimental endpoint",
+        "summary": "Raw metrics experimental endpoint, will be removed, for development only",
         "operationId": "otel_raw_experiment",
         "parameters": [
           {
@@ -5147,6 +5155,14 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "in": "path",
+            "name": "metric_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DiskMetricName"
+            }
           }
         ],
         "responses": {
@@ -5155,11 +5171,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Array_of_Measurement",
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Measurement"
-                  }
+                  "$ref": "#/components/schemas/Measurement"
                 }
               }
             }
