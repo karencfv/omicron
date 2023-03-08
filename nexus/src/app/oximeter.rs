@@ -329,13 +329,14 @@ impl super::Nexus {
         .unwrap())
     }
 
-    // TODO: Removeme after experiment is done
+    // TODO: Rename me after prototype is accepted
     pub async fn select_timeseries_otel_experiment(
         &self,
+        timeseries_name: &str,
         criteria: &[&str],
     ) -> Result<std::vec::Vec<Measurement>, Error> {
         // TODO: actually let this be modified
-        let timeseries_name = "crucible_upstairs:read_bytes";
+        //  let timeseries_name = "crucible_upstairs:read_bytes";
 
         let timeseries_list = self
             .timeseries_client
@@ -352,8 +353,8 @@ impl super::Nexus {
                 timeseries_name,
                 criteria,
                 None,
-                Some(Timestamp::Inclusive(Utc::now())), // None,
-                Some(NonZeroU32::new(1).unwrap()),      //None,
+                Some(Timestamp::Inclusive(Utc::now())),
+                Some(NonZeroU32::new(1).unwrap()),
                 Some(Order::Descending),
             )
             .await

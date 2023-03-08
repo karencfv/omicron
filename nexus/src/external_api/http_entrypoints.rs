@@ -375,7 +375,7 @@ pub fn external_api() -> NexusApiDescription {
         api.register(group_list_v1)?;
 
         // TODO: Removeme after experimental feature is finished
-        api.register(otel_experiment)?;
+        api.register(disk_metrics_stream)?;
         api.register(otel_raw_experiment)?;
 
         // Console API operations
@@ -2769,29 +2769,30 @@ async fn disk_metrics_list(
     apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
 }
 
-// TODO: Removeme after experiment is done
-/// Path parameters for OTEL experiment requests
+// TODO: Change name of this struct for the actual implementation
+/// Path parameters for OTEL prototype requests
 #[derive(Deserialize, JsonSchema)]
-struct OtelPathParam {
+struct DiskMetricsPathParam {
     disk_id: Uuid,
 }
 
+// TODO: Remove these query params as they are only being used for development.
 /// Query parameters for OTEL experiment requests
 #[derive(Deserialize, JsonSchema)]
 struct OtelQueryParam {
     seconds: Option<u64>,
 }
 
-// TODO: Removeme after experiment is done
+// TODO: Change path for the actual implementation
 /// OTEL experimental endpoint
 #[endpoint {
     method = GET,
-    path = "/otel/{disk_id}",
+    path = "/otel/{disk_id}/metric/{metric_name}",
     tags = ["disks"],
 }]
-async fn otel_experiment(
+async fn disk_metrics_stream(
     rqctx: RequestContext<Arc<ServerContext>>,
-    path_params: Path<OtelPathParam>,
+    path_params: Path<MetricsPathParam<DiskMetricsPathParam, DiskMetricName>>,
     query_params: Query<OtelQueryParam>,
     // TODO: Temporary response. Eventually we'll want something like WebsocketChannelResult
     // to represent shutting down a connection gracefully
@@ -2802,7 +2803,7 @@ async fn otel_experiment(
         let path = path_params.into_inner();
         let query = query_params.into_inner();
         let disk_selector =
-            params::DiskSelector::new(None, None, path.disk_id.into());
+            params::DiskSelector::new(None, None, path.inner.disk_id.into());
         let opctx = OpContext::for_external_api(&rqctx).await?;
         let (.., authz_disk) = nexus
             .disk_lookup(&opctx, &disk_selector)?
@@ -2810,10 +2811,10 @@ async fn otel_experiment(
             .await?;
 
         let result = nexus
-            .select_timeseries_otel_experiment(&[&format!(
-                "upstairs_uuid=={}",
-                authz_disk.id()
-            )])
+            .select_timeseries_otel_experiment(
+                &format!("crucible_upstairs:{}", path.metric_name),
+                &[&format!("upstairs_uuid=={}", authz_disk.id())],
+            )
             .await?;
 
         // OTEL code
@@ -2821,7 +2822,9 @@ async fn otel_experiment(
         let cx = Context::new();
 
         // Instrumentation scope
-        let meter = global::meter_with_version("omicron", Some("v1"), None);
+        // TODO: Agree on a naming convention
+        let meter =
+            global::meter_with_version("omicron.disk", Some("v1"), None);
 
         // All attributes and names follow OpenTelemetry semantic conventions
         // https://opentelemetry.io/docs/reference/specification/metrics/semantic_conventions/system-metrics/#systemdisk---disk-controller-metrics
@@ -2829,6 +2832,7 @@ async fn otel_experiment(
             KeyValue::new("device", authz_disk.id().to_string()),
             KeyValue::new("direction", "read"),
             KeyValue::new("resource.type", "disk"),
+            // TODO: Decide if version will make the MVP cut
             KeyValue::new("version", "1.0"),
             KeyValue::new("parent", authz_disk.parent().id().to_string()),
         ];
@@ -2880,7 +2884,8 @@ fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
     // A customer may have different collectors for different team's observability setup
     // It makes sense to be able to set the export config in each endpoint
     let export_config = ExportConfig {
-        // TODO: Take the collector endpoint from the API endpoint
+        // TODO: Only allow users to set the collector address through the `OTEL_EXPORTER_OTLP_ENDPOINT_DEFAULT`
+        // or take the collector endpoint from the API endpoint.
         endpoint: "http://localhost:4317".to_string(),
         ..ExportConfig::default()
     };
@@ -2900,16 +2905,16 @@ fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
         .build()
 }
 
-// TODO: Removeme after experiment is done
-/// OTEL experimental endpoint
+// TODO: Remove me after OTEL prototype is done
+/// Raw metrics experimental endpoint, will be removed, for development only
 #[endpoint {
     method = GET,
-    path = "/raw/{disk_id}",
+    path = "/raw/{disk_id}/metric/{metric_name}",
     tags = ["disks"],
 }]
 async fn otel_raw_experiment(
     rqctx: RequestContext<Arc<ServerContext>>,
-    path_params: Path<OtelPathParam>,
+    path_params: Path<MetricsPathParam<DiskMetricsPathParam, DiskMetricName>>,
 ) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
 {
     let apictx = rqctx.context();
@@ -2917,18 +2922,19 @@ async fn otel_raw_experiment(
         let nexus = &apictx.nexus;
         let path = path_params.into_inner();
         let disk_selector =
-            params::DiskSelector::new(None, None, path.disk_id.into());
+            params::DiskSelector::new(None, None, path.inner.disk_id.into());
         let opctx = OpContext::for_external_api(&rqctx).await?;
         let (.., authz_disk) = nexus
             .disk_lookup(&opctx, &disk_selector)?
             .lookup_for(authz::Action::Read)
             .await?;
 
+        println!("Metric name {}", path.metric_name);
         let result = nexus
-            .select_timeseries_otel_experiment(&[&format!(
-                "upstairs_uuid=={}",
-                authz_disk.id()
-            )])
+            .select_timeseries_otel_experiment(
+                &format!("crucible_upstairs:{}", path.metric_name),
+                &[&format!("upstairs_uuid=={}", authz_disk.id())],
+            )
             .await?;
 
         Ok(HttpResponseOk(result))
