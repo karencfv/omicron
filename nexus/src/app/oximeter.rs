@@ -334,7 +334,7 @@ impl super::Nexus {
         &self,
         timeseries_name: &str,
         criteria: &[&str],
-    ) -> Result<std::vec::Vec<Measurement>, Error> {
+    ) -> Result<Measurement, Error> {
         // TODO: actually let this be modified
         //  let timeseries_name = "crucible_upstairs:read_bytes";
 
@@ -377,16 +377,33 @@ impl super::Nexus {
             )));
         }
 
-        // If we received no data, exit early.
         let timeseries =
             if let Some(timeseries) = timeseries_list.into_iter().next() {
                 timeseries
             } else {
-                return Ok(Vec::new());
+                return Err(Error::internal_error(&format!(
+                    "no timeseries data for: {:?}, {:?}",
+                    timeseries_name, criteria
+                )));
             };
 
-        // TODO: Report the raw datum only, and set datum type separately
-        Ok(timeseries.measurements)
+        if timeseries.measurements.len() > 1 {
+            return Err(Error::internal_error(&format!(
+                "expected a single measurement but got {} ({:?} {:?})",
+                timeseries.measurements.len(),
+                timeseries_name,
+                criteria
+            )));
+        }
+
+        if let Some(datum) = timeseries.measurements.get(0) {
+            Ok(datum.clone())
+        } else {
+            return Err(Error::internal_error(&format!(
+                "no measurements available for: {:?}, {:?}",
+                timeseries_name, criteria
+            )));
+        }
     }
 
     // Internal helper to build an Oximeter client from its ID and address (common data between

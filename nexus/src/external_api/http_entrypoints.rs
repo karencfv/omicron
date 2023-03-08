@@ -2817,8 +2817,13 @@ async fn disk_metrics_stream(
             )
             .await?;
 
-        // OTEL code
-        let metrics_controller = init_otel_metrics_pipeline().unwrap();
+        let metrics_controller =
+            init_otel_metrics_pipeline().await.map_err(|e| {
+                Error::internal_error(&format!(
+                    "Cannot build OpenTelemetry pipeline: {}",
+                    e
+                ))
+            })?;
         let cx = Context::new();
 
         // Instrumentation scope
@@ -2843,8 +2848,9 @@ async fn disk_metrics_stream(
         // On another note, it's really hacky to get the last item from a vector formed
         // from all the reported metrics in the last "n" seconds, need to find a better
         // way to query this.
-        let last_datum = result.last();
-        let datum = i64::from(last_datum.unwrap().datum().value().unwrap());
+        //let last_datum = result.unwrap();
+
+        let datum = i64::from(result.datum().value().unwrap());
         let value = u64::try_from(datum).unwrap();
 
         // Example of metric that is recorded every second
@@ -2880,7 +2886,7 @@ async fn disk_metrics_stream(
 }
 
 // TODO: Removeme after experiment
-fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
+async fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
     // A customer may have different collectors for different team's observability setup
     // It makes sense to be able to set the export config in each endpoint
     let export_config = ExportConfig {
@@ -2915,8 +2921,7 @@ fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
 async fn otel_raw_experiment(
     rqctx: RequestContext<Arc<ServerContext>>,
     path_params: Path<MetricsPathParam<DiskMetricsPathParam, DiskMetricName>>,
-) -> Result<HttpResponseOk<std::vec::Vec<oximeter_db::Measurement>>, HttpError>
-{
+) -> Result<HttpResponseOk<oximeter_db::Measurement>, HttpError> {
     let apictx = rqctx.context();
     let handler = async {
         let nexus = &apictx.nexus;
@@ -2938,7 +2943,6 @@ async fn otel_raw_experiment(
             .await?;
 
         Ok(HttpResponseOk(result))
-        //   Ok(HttpResponseOk())
     };
     apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
 }
