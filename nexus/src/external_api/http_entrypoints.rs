@@ -2783,8 +2783,7 @@ struct OtelQueryParam {
     seconds: Option<u64>,
 }
 
-// TODO: Change path for the actual implementation
-/// OTEL experimental endpoint
+/// OTEL prototype endpoint
 #[endpoint {
     method = GET,
     path = "/otel/{disk_id}/metric/{metric_name}",
@@ -2794,8 +2793,8 @@ async fn disk_metrics_stream(
     rqctx: RequestContext<Arc<ServerContext>>,
     path_params: Path<MetricsPathParam<DiskMetricsPathParam, DiskMetricName>>,
     query_params: Query<OtelQueryParam>,
-    // TODO: Temporary response. Eventually we'll want something like WebsocketChannelResult
-    // to represent shutting down a connection gracefully
+    // TODO: Temporary response. Eventually we'll want something similar to WebsocketChannelResult
+    // but that represents streaming has begun.
 ) -> Result<HttpResponseAccepted<&'static str>, HttpError> {
     let apictx = rqctx.context();
     let handler = async {
@@ -2831,6 +2830,10 @@ async fn disk_metrics_stream(
         let meter =
             global::meter_with_version("omicron.disk", Some("v1"), None);
 
+        // TODO: The following settings are for "read_bytes" only. In a proper implementation, all of
+        // this code would be extracted out of here and values would not be hardcoded, but I will
+        // leave here for now just for readability purposes of this prototype.
+
         // All attributes and names follow OpenTelemetry semantic conventions
         // https://opentelemetry.io/docs/reference/specification/metrics/semantic_conventions/system-metrics/#systemdisk---disk-controller-metrics
         let common_attributes: [KeyValue; 5] = [
@@ -2842,16 +2845,11 @@ async fn disk_metrics_stream(
             KeyValue::new("parent", authz_disk.parent().id().to_string()),
         ];
 
-        // These unwraps are horrible, handle better
         // OpenTelemetry uses u64 as a convention for cumulative metrics.
         // Might be worth it for us to use u64 as well
-        // On another note, it's really hacky to get the last item from a vector formed
-        // from all the reported metrics in the last "n" seconds, need to find a better
-        // way to query this.
-        //let last_datum = result.unwrap();
-
-        let datum = i64::from(result.datum().value().unwrap());
-        let value = u64::try_from(datum).unwrap();
+        // TODO: Fix related value() function (safe to unwrap as it only returns this type)
+        let original_value = result.datum().value().unwrap();
+        let value = u64::try_from(original_value).unwrap();
 
         // Example of metric that is recorded every second
         // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
@@ -2866,6 +2864,8 @@ async fn disk_metrics_stream(
             })
             .unwrap();
 
+        // TODO: Remove this time limit on streaming for final implementation.
+        // Using now only for development.
         // stream metrics only for a designated amount of seconds.
         if let Some(seconds) = query.seconds {
             tokio::time::sleep(Duration::from_secs(seconds)).await;
@@ -2876,7 +2876,6 @@ async fn disk_metrics_stream(
                 "Metric streaming for testing stopped",
             ));
         }
-        // end of OTEL code
 
         Ok(HttpResponseAccepted(
             "Metric streaming to OTEL collector at http://localhost:4317",
@@ -2885,7 +2884,7 @@ async fn disk_metrics_stream(
     apictx.external_latencies.instrument_dropshot_handler(&rqctx, handler).await
 }
 
-// TODO: Removeme after experiment
+// TODO: Move me to another location
 async fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
     // A customer may have different collectors for different team's observability setup
     // It makes sense to be able to set the export config in each endpoint
@@ -2907,6 +2906,7 @@ async fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
                 .with_export_config(export_config),
         )
         // Sets the metric sampling frequency
+        // TODO: Allow users to set sampling frequency?
         .with_period(Duration::from_secs(1))
         .build()
 }

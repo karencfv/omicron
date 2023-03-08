@@ -304,19 +304,12 @@ impl Datum {
         }
     }
 
-    // TODO: Removeme after experiment, this is quite nasty
+    // TODO: Fixme after prototype, this is quite nasty
     /// Return the value of the underlying data, if this is cumulativei64, or `None`
     pub fn value(&self) -> Option<i64> {
         match self {
-            Datum::Bool(_) => None,
-            Datum::I64(_) => None,
-            Datum::F64(_) => None,
-            Datum::String(_) => None,
-            Datum::Bytes(_) => None,
             Datum::CumulativeI64(ref inner) => Some(inner.value()),
-            Datum::CumulativeF64(_) => None,
-            Datum::HistogramI64(_) => None,
-            Datum::HistogramF64(_) => None,
+            _ => None,
         }
     }
 }
