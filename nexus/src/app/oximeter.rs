@@ -329,15 +329,19 @@ impl super::Nexus {
         .unwrap())
     }
 
-    // TODO: Rename me after prototype is accepted
-    pub async fn select_timeseries_otel_experiment(
+    /// Returns last recorded datum from the timeseries DB based on the provided query
+    /// parameters.
+    ///
+    /// * `timeseries_name`: The "target:metric" name identifying the metric to
+    /// be queried.
+    /// * `criteria`: Any additional parameters to help narrow down the query
+    /// selection further. These parameters are passed directly to
+    /// [oximeter-db::client::select_timeseries_with].
+    pub async fn select_latest_datum(
         &self,
         timeseries_name: &str,
         criteria: &[&str],
     ) -> Result<Measurement, Error> {
-        // TODO: actually let this be modified
-        //  let timeseries_name = "crucible_upstairs:read_bytes";
-
         let timeseries_list = self
             .timeseries_client
             .get()
@@ -348,7 +352,8 @@ impl super::Nexus {
                     e
                 ))
             })?
-            // Retrieve only the last measurement
+            // TODO: I am not entirely sure if this method is the least expensive query
+            // for returning a timeseries with `limit: Some(1)`
             .select_timeseries_with(
                 timeseries_name,
                 criteria,
@@ -399,10 +404,10 @@ impl super::Nexus {
         if let Some(datum) = timeseries.measurements.get(0) {
             Ok(datum.clone())
         } else {
-            return Err(Error::internal_error(&format!(
+            Err(Error::internal_error(&format!(
                 "no measurements available for: {:?}, {:?}",
                 timeseries_name, criteria
-            )));
+            )))
         }
     }
 

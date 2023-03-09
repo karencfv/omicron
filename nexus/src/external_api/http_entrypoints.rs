@@ -82,6 +82,7 @@ use opentelemetry::sdk::metrics::controllers::BasicController;
 use opentelemetry::sdk::metrics::selectors;
 use opentelemetry::{metrics, Context, KeyValue};
 use opentelemetry_otlp::{ExportConfig, WithExportConfig};
+use oximeter::types::Datum;
 use std::time::Duration;
 
 type NexusApiDescription = ApiDescription<Arc<ServerContext>>;
@@ -2786,7 +2787,8 @@ struct OtelQueryParam {
 /// OTEL prototype endpoint
 #[endpoint {
     method = GET,
-    path = "/otel/{disk_id}/metric/{metric_name}",
+    // Prefixing with `/otel/` for now since using /v1/disks/ only gives me an error because I'm using ID :(
+    path = "/v1/otel/disks/{disk_id}/metric/{metric_name}",
     tags = ["disks"],
 }]
 async fn disk_metrics_stream(
@@ -2810,7 +2812,7 @@ async fn disk_metrics_stream(
             .await?;
 
         let result = nexus
-            .select_timeseries_otel_experiment(
+            .select_latest_datum(
                 &format!("crucible_upstairs:{}", path.metric_name),
                 &[&format!("upstairs_uuid=={}", authz_disk.id())],
             )
@@ -2855,7 +2857,7 @@ async fn disk_metrics_stream(
         // This is set above in the new pipeline with `.with_period(Duration::from_secs(1))`
         let counter = meter
             .u64_counter("system.disk.io")
-            .with_description("total number of bytes read at a given time")
+            .with_description("Total number of bytes read at a given time")
             .with_unit(Unit::new("By"))
             .init();
         meter
@@ -2887,10 +2889,10 @@ async fn disk_metrics_stream(
 // TODO: Move me to another location
 async fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
     // A customer may have different collectors for different team's observability setup
-    // It makes sense to be able to set the export config in each endpoint
+    // It makes sense to be able to set the export config in each time the an API endpoint is called
     let export_config = ExportConfig {
-        // TODO: Only allow users to set the collector address through the `OTEL_EXPORTER_OTLP_ENDPOINT_DEFAULT`
-        // or take the collector endpoint from the API endpoint.
+        // TODO: Only allow users to set the collector address through environment variables
+        // or take the collector endpoint from the API endpoint as well.
         endpoint: "http://localhost:4317".to_string(),
         ..ExportConfig::default()
     };
@@ -2903,6 +2905,8 @@ async fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
         .with_exporter(
             opentelemetry_otlp::new_exporter()
                 .tonic()
+                // If we decide to allow only setting the config through environment variables
+                // the method to use is `.with_env()`
                 .with_export_config(export_config),
         )
         // Sets the metric sampling frequency
@@ -2915,7 +2919,7 @@ async fn init_otel_metrics_pipeline() -> metrics::Result<BasicController> {
 /// Raw metrics experimental endpoint, will be removed, for development only
 #[endpoint {
     method = GET,
-    path = "/raw/{disk_id}/metric/{metric_name}",
+    path = "/v1/raw/disks/{disk_id}/metric/{metric_name}",
     tags = ["disks"],
 }]
 async fn otel_raw_experiment(
@@ -2934,9 +2938,8 @@ async fn otel_raw_experiment(
             .lookup_for(authz::Action::Read)
             .await?;
 
-        println!("Metric name {}", path.metric_name);
         let result = nexus
-            .select_timeseries_otel_experiment(
+            .select_latest_datum(
                 &format!("crucible_upstairs:{}", path.metric_name),
                 &[&format!("upstairs_uuid=={}", authz_disk.id())],
             )
