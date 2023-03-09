@@ -304,9 +304,9 @@ impl Datum {
         }
     }
 
-    // TODO: Fixme after prototype, this is quite nasty
+    // TODO: Fixme after prototype, this is quite nasty, ask for help with damn numeric generics
     /// Return the value of the underlying data, if this is cumulativei64, or `None`
-    pub fn value(&self) -> Option<i64> {
+    pub fn value_cumulative_i64(&self) -> Option<i64> {
         match self {
             Datum::CumulativeI64(ref inner) => Some(inner.value()),
             _ => None,

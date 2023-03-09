@@ -82,7 +82,6 @@ use opentelemetry::sdk::metrics::controllers::BasicController;
 use opentelemetry::sdk::metrics::selectors;
 use opentelemetry::{metrics, Context, KeyValue};
 use opentelemetry_otlp::{ExportConfig, WithExportConfig};
-use oximeter::types::Datum;
 use std::time::Duration;
 
 type NexusApiDescription = ApiDescription<Arc<ServerContext>>;
@@ -2849,8 +2848,8 @@ async fn disk_metrics_stream(
 
         // OpenTelemetry uses u64 as a convention for cumulative metrics.
         // Might be worth it for us to use u64 as well
-        // TODO: Fix related value() function (safe to unwrap as it only returns this type)
-        let original_value = result.datum().value().unwrap();
+        // TODO: Fix related value_cumulative_i64() method (safe to unwrap as it only returns this type)
+        let original_value = result.datum().value_cumulative_i64().unwrap();
         let value = u64::try_from(original_value).unwrap();
 
         // Example of metric that is recorded every second
