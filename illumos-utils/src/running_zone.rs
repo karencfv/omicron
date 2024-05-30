@@ -388,6 +388,7 @@ mod zenter {
 }
 
 /// Represents a running zone.
+#[derive(Debug)]
 pub struct RunningZone {
     // The `zoneid_t` for the zone, while it's running, or `None` if not.
     id: Option<i32>,
@@ -1077,6 +1078,7 @@ pub enum InstallZoneError {
     IncompleteBuilder,
 }
 
+#[derive(Debug)]
 pub struct InstalledZone {
     log: Logger,
 
@@ -1196,37 +1198,37 @@ pub struct ZoneBuilder<'a> {
     /// Logger to which status messages are written during zone installation.
     log: Option<Logger>,
     /// Allocates the NIC used for control plane communication.
-    underlay_vnic_allocator: Option<&'a VnicAllocator<Etherstub>>,
+    pub underlay_vnic_allocator: Option<&'a VnicAllocator<Etherstub>>,
     /// Filesystem path at which the installed zone will reside.
-    zone_root_path: Option<&'a Utf8Path>,
+    pub zone_root_path: Option<&'a Utf8Path>,
     /// The directories that will be searched for the image tarball for the
     /// provided zone type ([`Self::with_zone_type`]).
-    zone_image_paths: Option<&'a [Utf8PathBuf]>,
+    pub zone_image_paths: Option<&'a [Utf8PathBuf]>,
     /// The name of the type of zone being created (e.g. "propolis-server")
-    zone_type: Option<&'a str>,
+    pub zone_type: Option<&'a str>,
     /// Unique ID of the instance of the zone being created. (optional)
     // *actually* optional (in contrast to other fields that are `Option` for
     // builder purposes - that is, skipping this field in the builder will
     // still result in an `Ok(InstalledZone)` from `.install()`, rather than
     // an `Err(InstallZoneError::IncompleteBuilder)`.
-    unique_name: Option<Uuid>,
+    pub unique_name: Option<Uuid>,
     /// ZFS datasets to be accessed from within the zone.
     datasets: Option<&'a [zone::Dataset]>,
     /// Filesystems to mount within the zone.
     filesystems: Option<&'a [zone::Fs]>,
     /// Additional network device names to add to the zone.
-    data_links: Option<&'a [String]>,
+    pub data_links: Option<&'a [String]>,
     /// Device nodes to pass through to the zone.
-    devices: Option<&'a [zone::Device]>,
+    pub devices: Option<&'a [zone::Device]>,
     /// OPTE devices for the guest network interfaces.
-    opte_ports: Option<Vec<(Port, PortTicket)>>,
+    pub opte_ports: Option<Vec<(Port, PortTicket)>>,
     /// NIC to use for creating a bootstrap address on the switch zone.
     // actually optional (as above)
-    bootstrap_vnic: Option<Link>,
+    pub bootstrap_vnic: Option<Link>,
     /// Physical NICs possibly provisioned to the zone.
-    links: Option<Vec<Link>>,
+    pub links: Option<Vec<Link>>,
     /// The maximum set of privileges any process in this zone can obtain.
-    limit_priv: Option<Vec<String>>,
+    pub limit_priv: Option<Vec<String>>,
     /// For unit tests only: if `Some`, then no actual zones will be installed
     /// by this builder, and minimal facsimiles of them will be placed in
     /// temporary directories according to the contents of the provided

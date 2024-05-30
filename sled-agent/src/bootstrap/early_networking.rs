@@ -364,13 +364,27 @@ impl<'a> EarlyNetworkSetup<'a> {
         // First, we have to know which switch we are: ask MGS.
         info!(
             self.log,
-            "Determining physical location of our switch zone at \
+            "DEBUG EARLY NETWORKING - init_switch_config: Determining physical location of our switch zone at \
              {switch_zone_underlay_ip}",
         );
+
         let mgs_client = MgsClient::new(
             &format!("http://[{}]:{}", switch_zone_underlay_ip, MGS_PORT),
             self.log.new(o!("component" => "MgsClient")),
         );
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING: Created MGS client: 
+             {:#?}",
+            mgs_client
+        );
+
+        info!(self.log, "DEBUG EARLY NETWORKING - init_switch_config: Looping indefinitely until GET /local/switch-id returns. \
+        MGS API description: Get the identifier for the switch this MGS instance is connected to. \
+        Note that most MGS endpoints behave identically regardless of which scrimlet the MGS instance is running on; \
+        this one, however, is intentionally different. \
+        This endpoint is probably only useful for clients communicating with MGS over localhost (i.e., other services in the switch zone) \
+        who need to know which sidecar they are connected to.");
         let switch_slot = retry_notify(
             retry_policy_local(),
             || async {
@@ -383,7 +397,7 @@ impl<'a> EarlyNetworkSetup<'a> {
             |error, delay| {
                 warn!(
                     self.log,
-                    "Failed to get switch ID from MGS (retrying in {delay:?})";
+                    "DEBUG EARLY NETWORKING: Failed to get switch ID from MGS (retrying in {delay:?})";
                     "error" => ?error,
                 );
             },
@@ -402,6 +416,12 @@ impl<'a> EarlyNetworkSetup<'a> {
             }
         };
 
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING - init_switch_config: Retrieved information from MGS";
+            "switch slot" => #?switch_slot, "switch location" => #?switch_location
+        );
+
         // We now know which switch we are: filter the uplinks to just ours.
         let our_ports = rack_network_config
             .ports
@@ -412,10 +432,12 @@ impl<'a> EarlyNetworkSetup<'a> {
 
         info!(
             self.log,
-            "Initializing {} Uplinks on {switch_location:?} at \
-             {switch_zone_underlay_ip}",
-            our_ports.len(),
+            "DEBUG EARLY NETWORKING - init_switch_config: We now know which switch we are on. Filter the uplinks to just ours. \
+            Retrieve all configs for ports that match port.switch == the port location we just retrieved";
+            "all port configs" => #?rack_network_config.ports, "port configs" => #?our_ports,
+            "switch location" => #?switch_location
         );
+
         let dpd = DpdClient::new(
             &format!("http://[{}]:{}", switch_zone_underlay_ip, DENDRITE_PORT),
             dpd_client::ClientState {
@@ -424,6 +446,20 @@ impl<'a> EarlyNetworkSetup<'a> {
             },
         );
 
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING - init_switch_config: Created Dendrite client: 
+             {:#?}", dpd
+        );
+
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING - init_switch_config: Initializing {} Uplinks on {switch_location:?} at \
+             {switch_zone_underlay_ip}. \
+             configure uplink for each requested uplink in configuration that \
+             matches our switch_location",
+            our_ports.len(),
+        );
         // configure uplink for each requested uplink in configuration that
         // matches our switch_location
         for port_config in &our_ports {
@@ -434,8 +470,13 @@ impl<'a> EarlyNetworkSetup<'a> {
 
             info!(
                 self.log,
-                "Configuring default uplink on switch";
-                "config" => #?dpd_port_settings
+                "DEBUG EARLY NETWORKING - init_switch_config: Configuring default uplink on switch. \
+                Apply port settings atomically. These settings will be applied holistically, \
+                and to the extent possible atomically to a given port. \
+                In the event of a failure a rollback is attempted. \
+                If the rollback fails there will be inconsistent state. \
+                This failure mode returns the error code 'rollback failure'";
+                "config" => #?dpd_port_settings, "port id" => #?port_id,
             );
             dpd.port_settings_apply(
                 &port_id,
@@ -445,7 +486,7 @@ impl<'a> EarlyNetworkSetup<'a> {
             .await
             .map_err(|e| {
                 EarlyNetworkSetupError::Dendrite(format!(
-                    "unable to apply uplink port configuration: {e}"
+                    "DEBUG EARLY NETWORKING - init_switch_config: unable to apply uplink port configuration: {e}"
                 ))
             })?;
         }
@@ -457,17 +498,32 @@ impl<'a> EarlyNetworkSetup<'a> {
             ),
             self.log.clone(),
         );
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING - init_switch_config: Created Maghemite (MGD) client: 
+             {:#?}", mgd
+        );
 
         let mut config: Option<BgpConfig> = None;
         let mut bgp_peer_configs = HashMap::<String, Vec<BgpPeerConfig>>::new();
 
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING - init_switch_config: Iterate through ports and apply BGP config.";
+            "ports" => #?our_ports
+        );
         // Iterate through ports and apply BGP config.
         for port in &our_ports {
+            info!(
+                self.log,
+                "DEBUG EARLY NETWORKING: Set BGP peer configs for a port.";
+                "port" => #?port, "port BGP peers" => #?port.bgp_peers
+            );
             for peer in &port.bgp_peers {
                 if let Some(config) = &config {
                     if peer.asn != config.asn {
                         return Err(EarlyNetworkSetupError::BadConfig(
-                            "only one ASN per switch is supported".into(),
+                            "DEBUG EARLY NETWORKING: only one ASN per switch is supported".into(),
                         ));
                     }
                 } else {
@@ -479,7 +535,7 @@ impl<'a> EarlyNetworkSetup<'a> {
                             .ok_or(
                                 EarlyNetworkSetupError::BgpConfigurationError(
                                     format!(
-                                        "asn {} referenced by peer undefined",
+                                        "DEBUG EARLY NETWORKING: asn {} referenced by peer undefined",
                                         peer.asn
                                     ),
                                 ),
@@ -551,6 +607,11 @@ impl<'a> EarlyNetworkSetup<'a> {
                     },
                     vlan_id: peer.vlan_id,
                 };
+                info!(
+                    self.log,
+                    "DEBUG EARLY NETWORKING: BGP peer config for port.";
+                    "port" => #?port, "port name" => ?port.port, "BGP peer config" => #?bpc
+                );
                 match bgp_peer_configs.get_mut(&port.port) {
                     Some(peers) => {
                         peers.push(bpc);
@@ -564,7 +625,7 @@ impl<'a> EarlyNetworkSetup<'a> {
 
         if !bgp_peer_configs.is_empty() {
             if let Some(config) = &config {
-                mgd.bgp_apply(&ApplyRequest {
+                let apply_request = &ApplyRequest {
                     asn: config.asn,
                     peers: bgp_peer_configs,
                     shaper: config.shaper.as_ref().map(|x| ShaperSource {
@@ -580,14 +641,27 @@ impl<'a> EarlyNetworkSetup<'a> {
                         .iter()
                         .map(|x| Prefix4 { length: x.prefix(), value: x.ip() })
                         .collect(),
-                })
-                .await
-                .map_err(|e| {
+                };
+
+                info!(
+                    self.log,
+                    "DEBUG EARLY NETWORKING: Applying BGP config via Maghemite daemon (MGD).";
+                    "apply request" => #?apply_request);
+
+                mgd.bgp_apply(apply_request).await.map_err(|e| {
                     EarlyNetworkSetupError::BgpConfigurationError(format!(
                         "BGP peer configuration failed: {e}",
                     ))
                 })?;
+            } else {
+                info!(
+                    self.log,
+                    "DEBUG EARLY NETWORKING: BGP Config is empty. Not applying BGP config via Maghemite daemon (MGD).");
             }
+        } else {
+            info!(
+                self.log,
+                "DEBUG EARLY NETWORKING: BGP peer configs are empty. Not applying BGP config via Maghemite daemon (MGD).");
         }
 
         // Iterate through ports and apply static routing config.
@@ -611,6 +685,12 @@ impl<'a> EarlyNetworkSetup<'a> {
                 rq.routes.list.push(sr);
             }
         }
+
+        info!(
+            self.log,
+            "DEBUG EARLY NETWORKING: Adding static IPv4 routes via Maghemite daemon (MGD).";
+            "static route request" => #?rq);
+
         mgd.static_add_v4_route(&rq).await.map_err(|e| {
             EarlyNetworkSetupError::BgpConfigurationError(format!(
                 "static routing configuration failed: {e}",
@@ -636,6 +716,11 @@ impl<'a> EarlyNetworkSetup<'a> {
                 peer: spec.remote,
                 required_rx: spec.required_rx,
             };
+
+            info!(
+                self.log,
+                "DEBUG EARLY NETWORKING: Adding BFD peer config to Maghemite daemon (MGD).";
+                "static route request" => #?cfg);
             mgd.add_bfd_peer(&cfg).await.map_err(|e| {
                 EarlyNetworkSetupError::BfdConfigurationError(e.to_string())
             })?;
@@ -648,7 +733,7 @@ impl<'a> EarlyNetworkSetup<'a> {
         &self,
         port_config: &PortConfigV1,
     ) -> Result<(PortSettings, PortId), EarlyNetworkSetupError> {
-        info!(self.log, "Building Port Configuration");
+        info!(self.log, "DEBUG EARLY NETWORKING: Building Dendrite Port Configuration"; "port config" => #?port_config);
         let mut dpd_port_settings = PortSettings { links: HashMap::new() };
         let link_id = LinkId(0);
 
@@ -670,6 +755,7 @@ impl<'a> EarlyNetworkSetup<'a> {
             },
             addrs,
         };
+
         dpd_port_settings.links.insert(link_id.to_string(), link_settings);
         let port_id: PortId = port_config.port.parse().map_err(|e| {
             EarlyNetworkSetupError::BadConfig(format!(
@@ -686,12 +772,12 @@ impl<'a> EarlyNetworkSetup<'a> {
 
     async fn wait_for_dendrite(&self, dpd: &DpdClient) {
         loop {
-            info!(self.log, "Checking dendrite uptime");
+            info!(self.log, "DEBUG EARLY NETWORKING: Checking dendrite uptime to determine if it has come online");
             match dpd.dpd_uptime().await {
                 Ok(uptime) => {
                     info!(
                         self.log,
-                        "Dendrite online";
+                        "DEBUG EARLY NETWORKING: Dendrite online";
                         "uptime" => uptime.to_string()
                     );
                     break;
@@ -699,12 +785,12 @@ impl<'a> EarlyNetworkSetup<'a> {
                 Err(e) => {
                     info!(
                         self.log,
-                        "Unable to check Dendrite uptime";
+                        "DEBUG EARLY NETWORKING: Unable to check Dendrite uptime";
                         "reason" => #?e
                     );
                 }
             }
-            info!(self.log, "Waiting for dendrite to come online");
+            info!(self.log, "DEBUG EARLY NETWORKING: Waiting for dendrite to come online (2 second sleep)");
             tokio::time::sleep(std::time::Duration::from_secs(2)).await;
         }
     }

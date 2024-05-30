@@ -145,6 +145,10 @@ impl HardwareMonitor {
                     let tofino_loaded =
                         self.tofino_manager.become_ready(service_manager);
                     if tofino_loaded {
+                        info!(
+                            self.log,
+                            "DEBUG HARDWARE: Tofino is loaded, running HardwareMonitor::activate_switch()"
+                        );
                         self.activate_switch().await;
                     }
                 }
@@ -167,7 +171,13 @@ impl HardwareMonitor {
     ) {
         match update {
             Ok(update) => match update {
-                HardwareUpdate::TofinoLoaded => self.activate_switch().await,
+                HardwareUpdate::TofinoLoaded => {
+                    info!(
+                        self.log,
+                        "DEBUG HARDWARE UPDATE: Tofino is loaded, running HardwareMonitor::activate_switch()"
+                    );
+                    self.activate_switch().await
+                }
                 HardwareUpdate::TofinoUnloaded => {
                     self.deactivate_switch().await
                 }
@@ -216,6 +226,14 @@ impl HardwareMonitor {
     async fn activate_switch(&mut self) {
         match &mut self.tofino_manager {
             TofinoManager::Ready(service_manager) => {
+                info!(
+                    self.log,
+                    "DEBUG HARDWARE: Tofino is ready, activating switch";
+                    "underlay_info" => #?self.sled_agent
+                    .as_ref()
+                    .map(|sa| sa.switch_zone_underlay_info()),
+                   "baseboard" => #?self.baseboard
+                );
                 if let Err(e) = service_manager
                     .activate_switch(
                         self.sled_agent
@@ -229,6 +247,7 @@ impl HardwareMonitor {
                 }
             }
             TofinoManager::NotReady { tofino_loaded } => {
+                info!(self.log, "DEBUG HARDWARE: Tofino not ready");
                 *tofino_loaded = true;
             }
         }
@@ -260,14 +279,20 @@ impl HardwareMonitor {
         };
 
         info!(
-            self.log, "Checking current full hardware snapshot";
-            "underlay_network_info" => ?underlay_network,
-            "disks" => ?self.hardware_manager.disks(),
+            self.log, "DEBUG HARDWARE: Checking current full hardware snapshot";
+            "underlay_network_info" => #?underlay_network,
+            "disks" => #?self.hardware_manager.disks(),
         );
 
         if self.hardware_manager.is_scrimlet_driver_loaded() {
+            info!(
+                self.log, "DEBUG HARDWARE: Scrimlet driver loaded, running HardwareMonitor::activate_switch()";
+            );
             self.activate_switch().await;
         } else {
+            info!(
+                self.log, "DEBUG HARDWARE: Scrimlet driver not loaded, running HardwareMonitor::deactivate_switch()";
+            );
             self.deactivate_switch().await;
         }
 

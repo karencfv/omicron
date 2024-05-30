@@ -105,7 +105,7 @@ async fn initialize_sled_agent(
     };
     retry_notify(retry_policy_local(), sled_agent_initialize, log_failure)
         .await?;
-    info!(log, "Peer agent initialized"; "peer" => %bootstrap_addr);
+    info!(log, "DEBUG INITIALIZE SLED AGENT: Peer agent initialized"; "peer" => %bootstrap_addr);
     Ok(())
 }
 

@@ -116,6 +116,7 @@ pub struct PeerConnHandle {
 }
 
 // A handle to a task of an accepted socket, pre-handshake
+#[derive(Debug)]
 pub struct AcceptedConnHandle {
     pub handle: JoinHandle<()>,
     pub tx: mpsc::Sender<MainToConnMsg>,
@@ -487,6 +488,8 @@ pub async fn spawn_accepted_connection_management_task(
     // Create a channel for sending `MainToConnMsg`s to this connection task
     let (tx, rx) = mpsc::channel(2);
     let log = log.clone();
+    info!(log, "DEBUG PEER NETWORKING: Spawning accepted connection management task. Performing handshake";
+    "my_peer_id" => #?my_peer_id, "my_addr" => #?my_addr, "client_addr" => #?client_addr, "sock" => #?sock);
     let handle = tokio::spawn(async move {
         let (read_sock, write_sock, identify) = match perform_handshake(
             sock,
@@ -495,9 +498,12 @@ pub async fn spawn_accepted_connection_management_task(
         )
         .await
         {
-            Ok(val) => val,
+            Ok(val) => {
+                info!(log, "DEBUG PEER NETWORKING: Handshake accepted");
+                val
+            },
             Err(e) => {
-                warn!(log, "Handshake error: {:?}", e; "addr" => client_addr.to_string());
+                warn!(log, "DEBUG PEER NETWORKING: Handshake error: {:?}", e; "addr" => #?client_addr.to_string());
                 // This is a server so we bail and wait for a new connection.
                 // We must inform the main task so it can clean up any metadata.
                 let _ = main_tx

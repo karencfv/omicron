@@ -23,7 +23,7 @@ use crate::dladm::MockDladm as Dladm;
 /// A shareable wrapper around an atomic counter.
 /// May be used to allocate runtime-unique IDs for objects
 /// which have naming constraints - such as VNICs.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct VnicAllocator<DL: VnicSource + 'static> {
     value: Arc<AtomicU64>,
     scope: String,
@@ -215,6 +215,7 @@ impl Drop for Link {
 }
 
 // Represents the request to destroy a VNIC
+#[derive(Debug)]
 struct VnicDestruction {
     name: String,
 }

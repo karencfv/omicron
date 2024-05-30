@@ -23,8 +23,8 @@ pub trait Service {
 pub struct SmfHelper<'t> {
     running_zone: &'t RunningZone,
     service_name: String,
-    smf_name: String,
-    default_smf_name: String,
+    pub smf_name: String,
+    pub default_smf_name: String,
     import: bool,
 }
 

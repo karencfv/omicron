@@ -415,7 +415,7 @@ impl Node {
         match res {
             Ok((sock, addr)) => {
                 let SocketAddr::V6(addr) = addr else {
-                    warn!(self.log, "Got connection from IPv4 address {addr}");
+                    warn!(self.log, "DEBUG ON ACCEPT: Got connection from IPv4 address {addr}");
                     return;
                 };
                 // Remove any existing connection
@@ -423,7 +423,7 @@ impl Node {
                     info!(
                         self.log,
                         concat!(
-                            "Removing acccepted connection from {}: ",
+                            "DEBUG ON ACCEPT: Removing acccepted connection from {}: ",
                             "new connection accepted from same address"
                         ),
                         addr
@@ -432,7 +432,7 @@ impl Node {
                     // The connection has not yet completed its handshake
                     let _ = handle.tx.send(MainToConnMsg::Close).await;
                 }
-                info!(self.log, "Accepted connection from {addr}");
+                info!(self.log, "DEBUG ON ACCEPT: Accepted connection from {addr}");
                 self.handle_unique_id_counter += 1;
                 let handle = spawn_accepted_connection_management_task(
                     self.handle_unique_id_counter,
@@ -445,9 +445,10 @@ impl Node {
                 )
                 .await;
                 self.accepted_connections.insert(addr, handle);
+                info!(self.log, "DEBUG ON ACCEPT: Accepted connections: {:#?}", self.accepted_connections);
             }
             Err(err) => {
-                error!(self.log, "Failed to accept a connection: {err:?}");
+                error!(self.log, "DEBUG ON ACCEPT: Failed to accept a connection: {err:?}");
             }
         }
     }

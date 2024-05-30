@@ -100,6 +100,7 @@ impl<T: Deletable> DestructorWorker<T> {
     }
 }
 
+#[derive(Debug)]
 struct Inner<T> {
     tx: mpsc::UnboundedSender<Message<T>>,
     handle: Option<tokio::task::JoinHandle<()>>,
@@ -107,6 +108,7 @@ struct Inner<T> {
 
 /// A destructor which asynchronously destroys objects,
 /// which can throw errors during destruction.
+#[derive(Debug)]
 pub struct Destructor<T> {
     inner: Arc<Mutex<Inner<T>>>,
 }

@@ -98,7 +98,19 @@ pub async fn poll_ddmd_for_bootstore_peer_update(
                 let peers: BTreeSet<_> = addrs
                     .map(|ip| SocketAddrV6::new(ip, BOOTSTORE_PORT, 0, 0))
                     .collect();
+                info!(
+                    log,
+                    "DEBUG POLL DDMD FOR BOOTSTORE: peers: {:?}, current peers: {:?}",
+                    peers,
+                    current_peers
+                );
                 if peers != current_peers {
+                    info!(
+                        log,
+                        "DEBUG POLL DDMD FOR BOOTSTORE: peers {:?} not equal to current peers {:?}. Setting current_peers = peers",
+                        peers,
+                        current_peers
+                    );
                     current_peers = peers;
                     if let Err(e) = bootstore_node_handle
                         .load_peer_addresses(current_peers.clone())
@@ -107,7 +119,7 @@ pub async fn poll_ddmd_for_bootstore_peer_update(
                         error!(
                             log,
                             concat!(
-                                "Bootstore comms error: {}. ",
+                                "DEBUG POLL DDMD FOR BOOTSTORE: Bootstore comms error: {}. ",
                                 "bootstore::Node task must have panicked",
                             ),
                             e
@@ -118,7 +130,7 @@ pub async fn poll_ddmd_for_bootstore_peer_update(
             }
             Err(err) => {
                 warn!(
-                    log, "Failed to get prefixes from ddmd";
+                    log, "DEBUG POLL DDMD FOR BOOTSTORE: Failed to get prefixes from ddmd";
                     "err" => #%err,
                 );
                 break;
