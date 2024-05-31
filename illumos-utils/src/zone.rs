@@ -268,7 +268,7 @@ impl Zones {
         if let Some(state) = Self::halt_and_remove(name).await? {
             info!(
                 log,
-                "halt_and_remove_logged: Previous zone state: {:?}", state
+                "DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: {:?}", state
             );
         }
         Ok(())
@@ -294,7 +294,7 @@ impl Zones {
         if let Some(zone) = Self::find(zone_name).await? {
             info!(
                 log,
-                "install_omicron_zone: Found zone: {} in state {:?}",
+                "DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: {} in state {:?}",
                 zone.name(),
                 zone.state()
             );
@@ -305,14 +305,14 @@ impl Zones {
             } else {
                 info!(
                     log,
-                    "Invalid state; uninstalling and deleting zone {}",
-                    zone_name
+                    "DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone {}",
+                    zone_name; "state" => #?zone.state()
                 );
                 Zones::halt_and_remove_logged(log, zone.name()).await?;
             }
         }
 
-        info!(log, "Configuring new Omicron zone: {}", zone_name);
+        info!(log, "DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: {}", zone_name);
         let mut cfg = zone::Config::create(
             zone_name,
             // overwrite=
@@ -351,7 +351,7 @@ impl Zones {
             err,
         })?;
 
-        info!(log, "Installing Omicron zone: {}", zone_name);
+        info!(log, "DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: {}", zone_name);
 
         zone::Adm::new(zone_name)
             .install(&[

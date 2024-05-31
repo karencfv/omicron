@@ -1442,6 +1442,10 @@ impl<'a> ZoneBuilder<'a> {
         net_device_names.sort();
         net_device_names.dedup();
 
+        info!(log, "DEBUG INSTALL: Installing zone with the following configuration";
+        "root path" => #?zone_root_path, "full zone name" => #?full_zone_name,
+        "image path" => #?zone_image_path, "net device names" => #?net_device_names, 
+        "limit_priv" => #?limit_priv);
         Zones::install_omicron_zone(
             &log,
             &zone_root_path,
