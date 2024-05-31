@@ -361,7 +361,7 @@ impl Zones {
             zone_name
         );
 
-        zone::Adm::new(zone_name)
+        let installed_zone = zone::Adm::new(zone_name)
             .install(&[
                 zone_image.as_ref(),
                 "/opt/oxide/overlay.tar.gz".as_ref(),
@@ -372,6 +372,16 @@ impl Zones {
                 zone: zone_name.to_string(),
                 err,
             })?;
+        info!(
+            log,
+            "DEBUG INSTALL OMICRON ZONE: Omicron zone installed";
+            "brand specific options" => #?&[
+                zone_image.as_ref(),
+                "/opt/oxide/overlay.tar.gz",
+            ],
+            "install zone output" => #?installed_zone
+        );
+
         Ok(())
     }
 

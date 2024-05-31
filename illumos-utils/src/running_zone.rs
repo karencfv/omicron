@@ -1464,7 +1464,7 @@ impl<'a> ZoneBuilder<'a> {
             err,
         })?;
 
-        Ok(InstalledZone {
+        let installed_zone = InstalledZone {
             log: log.new(o!("zone" => full_zone_name.clone())),
             zonepath: zone_root_path.join(&full_zone_name),
             name: full_zone_name,
@@ -1472,7 +1472,11 @@ impl<'a> ZoneBuilder<'a> {
             bootstrap_vnic,
             opte_ports,
             links,
-        })
+        };
+
+        info!(log, "DEBUG INSTALL: Success"; "installed zone" => #?installed_zone);
+        
+        Ok(installed_zone)
     }
 }
 
