@@ -501,7 +501,7 @@ pub async fn spawn_accepted_connection_management_task(
             Ok(val) => {
                 info!(log, "DEBUG PEER NETWORKING: Handshake accepted");
                 val
-            },
+            }
             Err(e) => {
                 warn!(log, "DEBUG PEER NETWORKING: Handshake error: {:?}", e; "addr" => #?client_addr.to_string());
                 // This is a server so we bail and wait for a new connection.

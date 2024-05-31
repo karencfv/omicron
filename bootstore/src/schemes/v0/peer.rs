@@ -432,7 +432,10 @@ impl Node {
                     // The connection has not yet completed its handshake
                     let _ = handle.tx.send(MainToConnMsg::Close).await;
                 }
-                info!(self.log, "DEBUG ON ACCEPT: Accepted connection from {addr}");
+                info!(
+                    self.log,
+                    "DEBUG ON ACCEPT: Accepted connection from {addr}"
+                );
                 self.handle_unique_id_counter += 1;
                 let handle = spawn_accepted_connection_management_task(
                     self.handle_unique_id_counter,
@@ -445,10 +448,17 @@ impl Node {
                 )
                 .await;
                 self.accepted_connections.insert(addr, handle);
-                info!(self.log, "DEBUG ON ACCEPT: Accepted connections: {:#?}", self.accepted_connections);
+                info!(
+                    self.log,
+                    "DEBUG ON ACCEPT: Accepted connections: {:#?}",
+                    self.accepted_connections
+                );
             }
             Err(err) => {
-                error!(self.log, "DEBUG ON ACCEPT: Failed to accept a connection: {err:?}");
+                error!(
+                    self.log,
+                    "DEBUG ON ACCEPT: Failed to accept a connection: {err:?}"
+                );
             }
         }
     }

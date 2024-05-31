@@ -2394,7 +2394,7 @@ impl ServiceManager {
                     "addresses" => #?std::slice::from_ref(underlay_address),
                 );
                 std::slice::from_ref(underlay_address)
-            },
+            }
             ZoneArgs::Switch(req) => {
                 info!(
                     self.inner.log,
@@ -2402,7 +2402,7 @@ impl ServiceManager {
                     "addresses" => #?req.zone.addresses,
                 );
                 &req.zone.addresses
-            },
+            }
         };
         for addr in addresses {
             if *addr == Ipv6Addr::LOCALHOST {
@@ -4063,7 +4063,7 @@ impl ServiceManager {
                     "zone" => #?zone,
                 );
                 zone
-            },
+            }
             SledLocalZone::Disabled => {
                 return Err(Error::SledLocalZone(anyhow!(
                     "DEBUG ENSURE SCRIMLET HOST PORTS: Cannot configure switch zone uplinks: \
@@ -4318,15 +4318,21 @@ impl ServiceManager {
                                     "config/sled_id",
                                     info.config.sled_id,
                                 )?;
-                                debug_rack_id.push_str(&info.rack_id.to_string());
-                                debug_sled_id.push_str(&info.config.sled_id.to_string());
+                                debug_rack_id
+                                    .push_str(&info.rack_id.to_string());
+                                debug_sled_id
+                                    .push_str(&info.config.sled_id.to_string());
                             } else {
                                 info!(
                                     self.inner.log,
                                     "no rack_id/sled_id available yet"
                                 );
-                                debug_rack_id.push_str("no rack_id/sled_id available yet");
-                                debug_sled_id.push_str("no rack_id/sled_id available yet");
+                                debug_rack_id.push_str(
+                                    "no rack_id/sled_id available yet",
+                                );
+                                debug_sled_id.push_str(
+                                    "no rack_id/sled_id available yet",
+                                );
                             }
                             smfh.delpropvalue("config/address", "*")?;
                             smfh.delpropvalue("config/dns_server", "*")?;
@@ -4337,7 +4343,10 @@ impl ServiceManager {
                                     "config/address",
                                     &format!("[{}]:{}", address, DENDRITE_PORT),
                                 )?;
-                                debug_addresses.push_str(&format!(" [{}]:{}", address, DENDRITE_PORT));
+                                debug_addresses.push_str(&format!(
+                                    " [{}]:{}",
+                                    address, DENDRITE_PORT
+                                ));
                                 if *address != Ipv6Addr::LOCALHOST {
                                     let az_prefix =
                                         Ipv6Subnet::<AZ_PREFIX>::new(*address);
@@ -4348,7 +4357,8 @@ impl ServiceManager {
                                             "config/dns_server",
                                             &format!("{addr}"),
                                         )?;
-                                        debug_dns_server.push_str(&format!(" {addr}"));
+                                        debug_dns_server
+                                            .push_str(&format!(" {addr}"));
                                     }
                                 }
                             }
@@ -4382,7 +4392,10 @@ impl ServiceManager {
                             }
                         }
                         SwitchService::Lldpd { .. } => {
-                            info!(self.inner.log, "DEBUG ENSURE ZONE: configuring lldp service");
+                            info!(
+                                self.inner.log,
+                                "DEBUG ENSURE ZONE: configuring lldp service"
+                            );
                             smfh.delpropvalue("config/address", "*")?;
                             let mut debug_addrs = String::new();
                             for address in &request.addresses {
@@ -4390,7 +4403,10 @@ impl ServiceManager {
                                     "config/address",
                                     &format!("[{}]:{}", address, LLDP_PORT),
                                 )?;
-                                debug_addrs.push_str(&format!(" [{}]:{}", address, LLDP_PORT));
+                                debug_addrs.push_str(&format!(
+                                    " [{}]:{}",
+                                    address, LLDP_PORT
+                                ));
                             }
                             info!(self.inner.log, "DEBUG ENSURE ZONE: new lldpd properties set before refreshing service. All addresses deleted before updating new ones";
                             "config/address" => ?debug_addrs);
@@ -4419,7 +4435,10 @@ impl ServiceManager {
                             // nothing to configure
                         }
                         SwitchService::Mgd => {
-                            info!(self.inner.log, "DEBUG ENSURE ZONE: configuring mgd service");
+                            info!(
+                                self.inner.log,
+                                "DEBUG ENSURE ZONE: configuring mgd service"
+                            );
                             smfh.delpropvalue("config/dns_servers", "*")?;
                             let mut debug_rack_id = String::new();
                             let mut debug_sled_id = String::new();
@@ -4429,8 +4448,10 @@ impl ServiceManager {
                                     "config/sled_uuid",
                                     info.config.sled_id,
                                 )?;
-                                debug_rack_id.push_str(&info.rack_id.to_string());
-                                debug_sled_id.push_str(&info.config.sled_id.to_string());
+                                debug_rack_id
+                                    .push_str(&info.rack_id.to_string());
+                                debug_sled_id
+                                    .push_str(&info.config.sled_id.to_string());
                             }
                             let mut debug_addrs = String::new();
                             for address in &request.addresses {
@@ -4444,7 +4465,8 @@ impl ServiceManager {
                                             "config/dns_servers",
                                             &format!("{addr}"),
                                         )?;
-                                        debug_addrs.push_str(&format!(" {addr}"))
+                                        debug_addrs
+                                            .push_str(&format!(" {addr}"))
                                     }
                                     break;
                                 }
@@ -4455,7 +4477,10 @@ impl ServiceManager {
                             smfh.refresh()?;
                         }
                         SwitchService::MgDdm { mode } => {
-                            info!(self.inner.log, "DEBUG ENSURE ZONE: configuring mg-ddm service");
+                            info!(
+                                self.inner.log,
+                                "DEBUG ENSURE ZONE: configuring mg-ddm service"
+                            );
                             smfh.delpropvalue("config/mode", "*")?;
                             smfh.addpropvalue("config/mode", &mode)?;
 
@@ -4467,8 +4492,10 @@ impl ServiceManager {
                                     "config/sled_uuid",
                                     info.config.sled_id,
                                 )?;
-                                debug_rack_id.push_str(&info.rack_id.to_string());
-                                debug_sled_id.push_str(&info.config.sled_id.to_string());
+                                debug_rack_id
+                                    .push_str(&info.rack_id.to_string());
+                                debug_sled_id
+                                    .push_str(&info.config.sled_id.to_string());
                             }
 
                             let mut debug_addrs = String::new();
@@ -4484,7 +4511,8 @@ impl ServiceManager {
                                             "config/dns_servers",
                                             &format!("{addr}"),
                                         )?;
-                                        debug_addrs.push_str(&format!(" {addr}"))
+                                        debug_addrs
+                                            .push_str(&format!(" {addr}"))
                                     }
                                     break;
                                 }

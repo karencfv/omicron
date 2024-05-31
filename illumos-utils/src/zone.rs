@@ -312,7 +312,11 @@ impl Zones {
             }
         }
 
-        info!(log, "DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: {}", zone_name);
+        info!(
+            log,
+            "DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: {}",
+            zone_name
+        );
         let mut cfg = zone::Config::create(
             zone_name,
             // overwrite=
@@ -351,7 +355,11 @@ impl Zones {
             err,
         })?;
 
-        info!(log, "DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: {}", zone_name);
+        info!(
+            log,
+            "DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: {}",
+            zone_name
+        );
 
         zone::Adm::new(zone_name)
             .install(&[
