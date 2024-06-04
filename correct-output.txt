@@ -1,0 +1,1609 @@
+coatlicue@centzon:~/src/omicron$ ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+igb0/dhcp         dhcp     ok           192.168.50.80/24
+fake_external0/external static ok       192.168.1.199/24
+lo0/v6            static   ok           ::1/128
+net0/ll           addrconf ok           fe80::d85a:5cff:fe4e:8997%net0/10
+net1/ll           addrconf ok           fe80::2445:dff:fe82:2572%net1/10
+bootstrap0/ll     addrconf ok           fe80::8:20ff:fe34:db4d%bootstrap0/10
+bootstrap0/bootstrap6 static ok         fdb0:a8a1:59c7:4e85::1/64
+underlay0/ll      addrconf ok           fe80::8:20ff:feff:b03a%underlay0/10
+underlay0/sled6   static   ok           fd00:1122:3344:101::1/64
+underlay0/internaldns2 static ok        fd00:1122:3344:3::2/64
+underlay0/internaldns1 static ok        fd00:1122:3344:2::2/64
+underlay0/internaldns0 static ok        fd00:1122:3344:1::2/64
+
+coatlicue@centzon:~/src/omicron$ dladm
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+igb1        phys      1500   unknown  --         --
+igb0        phys      1500   up       --         --
+fake_external_stub0 etherstub 9000 up --         --
+fake_external0 vnic   9000   up       --         fake_external_stub0
+net0        simnet    9000   up       --         sc0_0
+sc0_0       simnet    9000   up       --         net0
+net1        simnet    9000   up       --         sc1_0
+sc1_0       simnet    9000   up       --         net1
+sc0_1       vnic      9000   up       --         fake_external_stub0
+tfportrear0_0 simnet  9000   up       --         sidecar_shi0
+sidecar_shi0 simnet   9000   up       --         tfportrear0_0
+tfportqsfp0_0 simnet  9000   up       --         sidecar_shi1
+sidecar_shi1 simnet   9000   up       --         tfportqsfp0_0
+bootstrap_stub0 etherstub 9000 up     --         --
+bootstrap0  vnic      1500   up       --         bootstrap_stub0
+underlay_stub0 etherstub 9000 up      --         --
+underlay0   vnic      9000   up       --         underlay_stub0
+oxBootstrap0 vnic     1500   up       --         bootstrap_stub0
+oxControlService0 vnic 9000  up       --         underlay_stub0
+oxControlService1 vnic 9000  up       --         underlay_stub0
+oxControlService2 vnic 9000  up       --         underlay_stub0
+oxControlService3 vnic 9000  up       --         underlay_stub0
+opte0       misc      1500   up       --         --
+vopte0      vnic      1500   up       --         opte0
+oxControlService4 vnic 9000  up       --         underlay_stub0
+oxControlService5 vnic 9000  up       --         underlay_stub0
+oxControlService6 vnic 9000  up       --         underlay_stub0
+oxControlService7 vnic 9000  up       --         underlay_stub0
+oxControlService8 vnic 9000  up       --         underlay_stub0
+oxControlService9 vnic 9000  up       --         underlay_stub0
+oxControlService10 vnic 9000 up       --         underlay_stub0
+oxControlService11 vnic 9000 up       --         underlay_stub0
+oxControlService12 vnic 9000 up       --         underlay_stub0
+oxControlService13 vnic 9000 up       --         underlay_stub0
+oxControlService14 vnic 9000 up       --         underlay_stub0
+oxControlService15 vnic 9000 up       --         underlay_stub0
+oxControlService16 vnic 9000 up       --         underlay_stub0
+oxControlService17 vnic 9000 up       --         underlay_stub0
+oxControlService18 vnic 9000 up       --         underlay_stub0
+oxControlService19 vnic 9000 up       --         underlay_stub0
+oxControlService20 vnic 9000 up       --         underlay_stub0
+oxControlService21 vnic 9000 up       --         underlay_stub0
+oxControlService22 vnic 9000 up       --         underlay_stub0
+oxControlService23 vnic 9000 up       --         underlay_stub0
+opte1       misc      1500   up       --         --
+vopte1      vnic      1500   up       --         opte1
+opte2       misc      1500   up       --         --
+vopte2      vnic      1500   up       --         opte2
+opte3       misc      1500   up       --         --
+vopte3      vnic      1500   up       --         opte3
+opte4       misc      1500   up       --         --
+vopte4      vnic      1500   up       --         opte4
+opte5       misc      1500   up       --         --
+vopte5      vnic      1500   up       --         opte5
+oxControlService24 vnic 9000 up       --         underlay_stub0
+oxControlService25 vnic 9000 up       --         underlay_stub0
+oxControlService26 vnic 9000 up       --         underlay_stub0
+oxControlService27 vnic 9000 up       --         underlay_stub0
+oxControlService28 vnic 9000 up       --         underlay_stub0
+
+
+root@oxz_switch:~# svcs -a | grep oxide
+online          0:17:30 svc:/oxide/switch_zone_setup:default
+online          0:17:33 svc:/oxide/tfport:default
+online          0:17:33 svc:/oxide/sp-sim:default
+online          0:17:34 svc:/oxide/dendrite:default
+online          0:17:34 svc:/oxide/lldpd:default
+online          0:17:34 svc:/oxide/mgs:default
+online          0:17:34 svc:/oxide/wicketd:default
+online          0:17:34 svc:/oxide/mgd:default
+online          0:17:34 svc:/oxide/mg-ddm:default
+online          0:26:29 svc:/oxide/uplink:default
+
+
+root@oxz_switch:~# cat /opt/oxide/baseboard.json 
+{
+  "type": "pc",
+  "identifier": "centzon",
+  "model": "i86pc"
+}
+
+root@oxz_switch:~# getent passwd
+root:x:0:0:Super-User:/root:/usr/bin/bash
+daemon:x:1:1::/:
+bin:x:2:2::/usr/bin:
+sys:x:3:3::/:
+adm:x:4:4:Admin:/var/adm:
+lp:x:71:8:Line Printer Admin:/usr/spool/lp:
+uucp:x:5:5:uucp Admin:/usr/lib/uucp:
+nuucp:x:9:9:uucp Admin:/var/spool/uucppublic:/usr/lib/uucp/uucico
+dladm:x:15:65:Datalink Admin:/:
+netadm:x:16:65:Network Admin:/:
+netcfg:x:17:65:Network Configuration Admin:/:
+listen:x:37:4:Network Admin:/usr/net/nls:
+gdm:x:50:50:GDM Reserved UID:/var/lib/gdm:
+zfssnap:x:51:12:ZFS Automatic Snapshots Reserved UID:/:/usr/bin/pfsh
+upnp:x:52:52:UPnP Server Reserved UID:/var/coherence:/bin/ksh
+xvm:x:60:60:xVM User:/:
+mysql:x:70:70:MySQL Reserved UID:/:
+openldap:x:75:75:OpenLDAP User:/:
+webservd:x:80:80:WebServer Reserved UID:/:
+svctag:x:95:12:Service Tag UID:/:
+unknown:x:96:96:Unknown Remote UID:/:
+nobody:x:60001:60001:NFS Anonymous Access User:/:
+noaccess:x:60002:60002:No Access User:/:
+nobody4:x:65534:65534:SunOS 4.x NFS Anonymous Access User:/:
+chrony:x:23:23:chrony user:/var/lib/chrony:
+dma:x:26:6:DragonFly Mail Agent:/:
+sshd:x:92:92:OpenSSH privsep user:/var/empty:/bin/false
+pkg5srv:x:97:97:pkg(7) server UID:/:
+wicket:x:100:100:Wicket User:/home/wicket:/bin/sh
+support:x:101:101:Oxide Support:/home/support:/bin/bash
+
+root@oxz_switch:~# logins
+root            0       root            0       Super-User
+daemon          1       other           1       
+bin             2       bin             2       
+sys             3       sys             3       
+adm             4       adm             4       Admin
+uucp            5       uucp            5       uucp Admin
+nuucp           9       nuucp           9       uucp Admin
+dladm           15      netadm          65      Datalink Admin
+netadm          16      netadm          65      Network Admin
+netcfg          17      netadm          65      Network Configuration Admin
+chrony          23      chrony          23      chrony user
+dma             26      mail            6       DragonFly Mail Agent
+listen          37      adm             4       Network Admin
+gdm             50      gdm             50      GDM Reserved UID
+zfssnap         51      daemon          12      ZFS Automatic Snapshots Reserved UID
+upnp            52      upnp            52      UPnP Server Reserved UID
+xvm             60      xvm             60      xVM User
+mysql           70      mysql           70      MySQL Reserved UID
+lp              71      lp              8       Line Printer Admin
+openldap        75      openldap        75      OpenLDAP User
+webservd        80      webservd        80      WebServer Reserved UID
+sshd            92      sshd            92      OpenSSH privsep user
+svctag          95      daemon          12      Service Tag UID
+unknown         96      unknown         96      Unknown Remote UID
+pkg5srv         97      pkg5srv         97      pkg(7) server UID
+wicket          100     wicket          100     Wicket User
+support         101     support         101     Oxide Support
+nobody          60001   nobody          60001   NFS Anonymous Access User
+noaccess        60002   noaccess        60002   No Access User
+nobody4         65534   nogroup         65534   SunOS 4.x NFS Anonymous Access User
+
+root@oxz_switch:~# dladm
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+tfportrear0_0 simnet  9000   up       --         ?
+tfportqsfp0_0 simnet  9000   up       --         ?
+oxBootstrap0 vnic     1500   up       --         ?
+oxControlService0 vnic 9000  up       --         ?
+
+root@oxz_switch:~# ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+tfportqsfp0_0/uplink1 static ok         192.168.1.30/24
+lo0/v6            static   ok           ::1/128
+oxControlService0/ll addrconf ok        fe80::8:20ff:fe24:4474%oxControlService0/10
+oxControlService0/omicron6 static ok    fd00:1122:3344:101::2/64
+tfportrear0_0/ll  addrconf ok           fe80::403e:96ff:fe6a:3017%tfportrear0_0/10
+oxBootstrap0/ll   addrconf ok           fe80::8:20ff:fea2:e43f%oxBootstrap0/10
+oxBootstrap0/bootstrap6 static ok       fdb0:a8a1:59c7:4e85::2/64
+
+// From a second installation
+root@oxz_switch:~# ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+tfportqsfp0_0/uplink1 static ok         192.168.1.30/24
+lo0/v6            static   ok           ::1/128
+oxControlService0/ll addrconf ok        fe80::8:20ff:fe9b:a369%oxControlService0/10
+oxControlService0/omicron6 static ok    fd00:1122:3344:101::2/64
+tfportrear0_0/ll  addrconf ok           fe80::88b1:9ff:fe44:5de2%tfportrear0_0/10
+oxBootstrap0/ll   addrconf ok           fe80::8:20ff:fef0:ece%oxBootstrap0/10
+oxBootstrap0/bootstrap6 static ok       fdb0:a8a1:59c7:4e85::2/64
+
+
+root@oxz_switch:~# svcs -a | grep oxide
+online          3:05:38 svc:/oxide/switch_zone_setup:default
+online          3:05:41 svc:/oxide/tfport:default
+online          3:05:42 svc:/oxide/sp-sim:default
+online          3:05:42 svc:/oxide/dendrite:default
+online          3:05:42 svc:/oxide/lldpd:default
+online          3:05:43 svc:/oxide/mgs:default
+online          3:05:43 svc:/oxide/wicketd:default
+online          3:05:43 svc:/oxide/mgd:default
+online          3:05:43 svc:/oxide/mg-ddm:default
+online          3:17:33 svc:/oxide/uplink:default
+
+root@oxz_switch:~# svcprop -p config tfport
+config/pkt_source astring none
+config/flags astring --sync-only
+config/host astring [::1]
+config/port astring 12224
+
+root@oxz_switch:~# svcprop -p config sp-sim
+svcprop: Couldn't find property group `config' for instance `svc:/oxide/sp-sim:default'.
+
+root@oxz_switch:~# svcprop -p config dendrite
+config/enable_rpw astring true
+config/log_file astring unknown
+config/log_format astring unknown
+config/mac_base astring unknown
+config/nexus_address astring unknown
+config/mgmt astring uds
+config/uds_path astring /opt/softnpu/stuff
+config/front_ports astring 1
+config/rear_ports astring 1
+config/port_config astring /opt/oxide/dendrite/misc/softnpu_single_sled_config.toml
+config/rack_id astring 5e5c5ad5-644b-42e7-9531-4eeb727927e2
+config/sled_id astring 4b399132-d3e0-48f5-aa2c-f702332a37db
+config/dns_server astring [fd00:1122:3344:1::1]:53 [fd00:1122:3344:2::1]:53 [fd00:1122:3344:3::1]:53 [fd00:1122:3344:4::1]:53 [fd00:1122:3344:5::1]:53
+config/address astring [fd00:1122:3344:101::2]:12224 [::1]:12224
+
+root@oxz_switch:~# svcprop -p config lldpd   
+config/scrimlet_id astring centzon
+config/scrimlet_model astring i86pc
+config/board_rev astring softnpu_front_1_rear_1
+config/address astring [fd00:1122:3344:101::2]:12230 [::1]:12230
+
+root@oxz_switch:~# svcprop -p config mgs  
+config/id astring 0e11b738-6b51-48be-b0cd-c4737eb1d18c
+config/address astring [::1]:12225 [fd00:1122:3344:101::2]:12225
+config/rack_id astring 5e5c5ad5-644b-42e7-9531-4eeb727927e2
+
+root@oxz_switch:~# svcprop -p config wicketd
+config/address astring [::1]:12226
+config/artifact-address astring [fdb0:a8a1:59c7:4e85::2]:12227
+config/mgs-address astring [::1]:12225
+config/nexus-proxy-address astring [::]:12229
+config/baseboard-file astring /opt/oxide/baseboard.json
+config/rack-subnet astring fd00:1122:3344::
+
+root@oxz_switch:~# svcprop -p config mgd    
+config/admin_host astring ::
+config/admin_port count 4676
+config/rack_uuid astring 5e5c5ad5-644b-42e7-9531-4eeb727927e2
+config/sled_uuid astring 4b399132-d3e0-48f5-aa2c-f702332a37db
+config/dns_servers astring [fd00:1122:3344:1::1]:53 [fd00:1122:3344:2::1]:53 [fd00:1122:3344:3::1]:53 [fd00:1122:3344:4::1]:53 [fd00:1122:3344:5::1]:53
+
+root@oxz_switch:~# svcprop -p config mg-ddm
+config/admin_host astring ::1
+config/admin_port count 8000
+config/dpd_host astring ""
+config/dpd_port astring ""
+config/log astring info
+config/interfaces astring tfportrear0_0/ll
+config/dendrite boolean true
+config/mode astring transit
+config/rack_uuid astring 5e5c5ad5-644b-42e7-9531-4eeb727927e2
+config/sled_uuid astring 4b399132-d3e0-48f5-aa2c-f702332a37db
+config/dns_servers astring [fd00:1122:3344:1::1]:53 [fd00:1122:3344:2::1]:53 [fd00:1122:3344:3::1]:53 [fd00:1122:3344:4::1]:53 [fd00:1122:3344:5::1]:53
+
+root@oxz_switch:~# svcprop -p config uplink
+svcprop: Couldn't find property group `config' for instance `svc:/oxide/uplink:default'.
+
+root@oxz_switch:~# cat /var/svc/log/oxide-mgs:default.log
+May 10 03:15:02.507 INFO accepted connection, remote_addr: [fd00:1122:3344:101::a]:54452, local_addr: [fd00:1122:3344:101::2]:12225, component: dropshot, name: 0e11b738-6b51-48be-b0cd-c4737eb1d18c, file: /home/coatlicue/.cargo/git/checkouts/dropshot-a4a923d29dccc492/29ae98d/dropshot/src/server.rs:765
+May 10 03:15:02.507 INFO request completed, latency_us: 29, response_code: 200, uri: /local/switch-id, method: GET, req_id: bea2351e-07f3-44c4-a0d9-97681333743f, remote_addr: [fd00:1122:3344:101::a]:54452, local_addr: [fd00:1122:3344:101::2]:12225, component: dropshot, name: 0e11b738-6b51-48be-b0cd-c4737eb1d18c, file: /home/coatlicue/.cargo/git/checkouts/dropshot-a4a923d29dccc492/29ae98d/dropshot/src/server.rs:849
+May 10 03:15:02.508 INFO accepted connection, remote_addr: [fd00:1122:3344:101::a]:39768, local_addr: [fd00:1122:3344:101::2]:12225, component: dropshot, name: 0e11b738-6b51-48be-b0cd-c4737eb1d18c, file: /home/coatlicue/.cargo/git/checkouts/dropshot-a4a923d29dccc492/29ae98d/dropshot/src/server.rs:765
+
+
+------------------------------------
+{"msg":"Querying MGS to determine switch location","v":0,"name":"SledAgent","level":30,"time":"2024-05-10T03:05:43.882014429Z","hostname":"centzon","pid":7980,"component":"ServiceManager","file":"sled-agent/src/bootstrap/early_networking.rs:275","addr":"fd00:1122:3344:101::2"}
+{"msg":"Found Switch0 at fd00:1122:3344:101::2","v":0,"name":"SledAgent","level":30,"time":"2024-05-10T03:05:43.882636694Z","hostname":"centzon","pid":7980,"component":"ServiceManager","file":"sled-agent/src/bootstrap/early_networking.rs:300"}
+{"msg":"Successfully looked up all expected switch zone underlay addresses","v":0,"name":"SledAgent","level":30,"time":"2024-05-10T03:05:43.882649195Z","hostname":"centzon","pid":7980,"component":"ServiceManager","file":"sled-agent/src/bootstrap/early_networking.rs:192","addrs":"{Switch0: fd00:1122:3344:101::2}"}
+
+------------------------------------
+
+/// Logs for switch zone start up
+03:15:08.410Z INFO SledAgent (BootstrapAgentRssHandler): Peer agent initialized
+    file = sled-agent/src/bootstrap/rss_handle.rs:108
+    peer = [fdb0:a840:2500:1::1]:12346
+03:15:08.410Z INFO SledAgent (BootstrapAgentRssHandler): Initialized sled agent
+    file = sled-agent/src/bootstrap/rss_handle.rs:232
+    target_sled = [fdb0:a840:2500:1::1]:12346
+<...>
+03:17:16.086Z WARN SledAgent (ServiceManager): Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 2098 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 16 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 1 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+<...>
+03:17:28.832Z WARN SledAgent (BootstrapAgentRssHandler): failed to start sled agent
+    error = Connect { addr: [fdb0:a840:2500:3::1]:12346, err: Os { code: 128, kind: NetworkUnreachable, message: "Network is unreachable" } }
+    file = sled-agent/src/bootstrap/rss_handle.rs:104
+03:17:28.993Z INFO SledAgent (ServiceManager): Ensuring bootstrap address fdb0:a840:2500:1::2 exists in switch zone
+    file = sled-agent/src/services.rs:2320
+03:17:28.993Z INFO SledAgent (ServiceManager): Adding bootstrap address
+    file = illumos-utils/src/running_zone.rs:626
+    zone = oxz_switch
+May 17 03:15:25 unknown last message repeated 1 time
+03:17:39.495Z INFO SledAgent (ServiceManager): Forwarding bootstrap traffic via oxBootstrap30 to fe80::8:20ff:fea8:c9de
+    file = sled-agent/src/services.rs:2327
+03:17:39.502Z INFO SledAgent (ServiceManager): Ensuring address fd00:1122:3344:101::2 exists
+    file = sled-agent/src/services.rs:2356
+03:17:39.502Z INFO SledAgent (ServiceManager): Adding address: Static(V6(Ipv6Network { addr: fd00:1122:3344:101::2, prefix: 64 }))
+    file = illumos-utils/src/running_zone.rs:609
+    zone = oxz_switch
+03:17:40.053Z INFO SledAgent (ServiceManager): Ensuring address fd00:1122:3344:101::2 exists - OK
+    file = sled-agent/src/services.rs:2364
+03:17:40.053Z INFO SledAgent (ServiceManager): Zone using sled underlay as gateway
+    file = sled-agent/src/services.rs:2383
+03:17:40.213Z INFO SledAgent (ServiceManager): Setting up dendrite service
+    file = sled-agent/src/services.rs:2573
+03:17:40.530Z INFO SledAgent (ServiceManager): Setting up lldpd service
+    file = sled-agent/src/services.rs:2737
+03:17:40.757Z INFO SledAgent (ServiceManager): Setting up MGS service
+    file = sled-agent/src/services.rs:2452
+03:17:41.132Z INFO SledAgent (ServiceManager): Setting up wicketd service
+    file = sled-agent/src/services.rs:2487
+03:17:41.190Z INFO SledAgent (bootstore): Accepted connection from [fdb0:a840:2500:5::1]:48104
+    file = bootstore/src/schemes/v0/peer.rs:435
+    peer_id = pc-g0-i86pc
+03:17:41.191Z INFO SledAgent (bootstore): Accepted connection from [fdb0:a840:2500:7::1]:40497
+    file = bootstore/src/schemes/v0/peer.rs:435
+    peer_id = pc-g0-i86pc
+03:17:41.191Z WARN SledAgent (ServiceManager): Failed to get switch ID from MGS (retrying in 805.628552ms)
+    error = Communication Error: error sending request for url (http://[fd00:1122:3344:101::2]:12225/local/switch-id): operation timed out
+    file = sled-agent/src/bootstrap/early_networking.rs:384
+03:17:41.191Z INFO SledAgent (bootstore): Accepted connection from [fdb0:a840:2500:3::1]:36540
+    file = bootstore/src/schemes/v0/peer.rs:435
+    peer_id = pc-g0-i86pc
+03:17:41.192Z INFO SledAgent (dropshot (BootstrapAgent)): accepted connection
+    file = /home/coatlicue/.cargo/git/checkouts/dropshot-a4a923d29dccc492/283d897/dropshot/src/server.rs:766
+    local_addr = [fdb0:a840:2500:1::1]:80
+    remote_addr = [fdb0:a840:2500:7::2]:54576
+03:17:41.192Z INFO SledAgent (bootstore): Updated Peer Addresses: {[fdb0:a840:2500:3::1]:12347, [fdb0:a840:2500:5::1]:12347, [fdb0:a840:2500:7::1]:12347}
+    file = bootstore/src/schemes/v0/peer.rs:514
+    peer_id = pc-g0-i86pc
+03:17:41.459Z INFO SledAgent (ServiceManager): Setting up mgd service
+    file = sled-agent/src/services.rs:2787
+03:17:41.825Z INFO SledAgent (ServiceManager): Setting up mg-ddm service
+    file = sled-agent/src/services.rs:2814
+03:17:42.000Z WARN SledAgent (ServiceManager): Failed to get switch ID from MGS (retrying in 1.387868707s)
+    error = Error Response: status: 503 Service Unavailable; headers: {"content-type": "application/json", "x-request-id": "1f898fc6-3c81-4324-a1d4-617f226842cb", "content-length": "152", "date": "Fri, 17 May 2024 03:17:41 GMT"}; value: Error { error_code: Some("DiscoveryNotYetComplete"), message: "discovery process not yet complete", request_id: "1f898fc6-3c81-4324-a1d4-617f226842cb" }
+    file = sled-agent/src/bootstrap/early_networking.rs:384
+03:17:42.141Z INFO SledAgent (ServiceManager): Setting up tfport service
+    file = sled-agent/src/services.rs:2681
+<...>
+03:17:42.282Z INFO SledAgent (BootstrapAgentRssHandler): Peer agent initialized
+    file = sled-agent/src/bootstrap/rss_handle.rs:108
+    peer = [fdb0:a840:2500:5::1]:12346
+03:17:42.282Z INFO SledAgent (BootstrapAgentRssHandler): Initialized sled agent
+    file = sled-agent/src/bootstrap/rss_handle.rs:232
+    target_sled = [fdb0:a840:2500:5::1]:12346
+03:17:42.285Z INFO SledAgent (BootstrapAgentRssHandler): Peer agent initialized
+    file = sled-agent/src/bootstrap/rss_handle.rs:108
+    peer = [fdb0:a840:2500:3::1]:12346
+03:17:42.285Z INFO SledAgent (BootstrapAgentRssHandler): Initialized sled agent
+    file = sled-agent/src/bootstrap/rss_handle.rs:232
+    target_sled = [fdb0:a840:2500:3::1]:12346
+03:17:42.382Z INFO SledAgent (ServiceManager): Setting up Simulated SP service
+    file = sled-agent/src/services.rs:2481
+03:17:42.395Z INFO SledAgent (BootstrapAgentRssHandler): Peer agent initialized
+    file = sled-agent/src/bootstrap/rss_handle.rs:108
+    peer = [fdb0:a840:2500:7::1]:12346
+03:17:42.395Z INFO SledAgent (BootstrapAgentRssHandler): Initialized sled agent
+    file = sled-agent/src/bootstrap/rss_handle.rs:232
+    target_sled = [fdb0:a840:2500:7::1]:12346
+03:17:42.395Z INFO SledAgent (StorageManager): Received GetLatestResources(...)
+    file = sled-storage/src/manager.rs:381
+
+// Switch on g0
+
+root@oxz_switch:~# svccfg -s svc:/oxide/wicketd:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-wicketd:default.log
+restarter/contract                 count    235
+restarter/start_pid                count    3046
+restarter/start_method_timestamp   time     1715915861.312181000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915861.314076000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/wicketd listprop
+multi_user                                                dependency
+multi_user/entities                                       fmri     svc:/milestone/multi-user:default
+multi_user/grouping                                       astring  require_all
+multi_user/restart_on                                     astring  none
+multi_user/type                                           astring  service
+start                                                     method
+start/exec                                                astring  "ctrun -l child -o noorphan,regent /opt/oxide/wicketd/bin/wicketd run /var/svc/manifest/site/wicketd/config.toml --address %{config/address} --artifact-address %{config/artifact-address} --mgs-address %{config/mgs-address} --nexus-proxy-address %{config/nexus-proxy-address} --baseboard-file %{config/baseboard-file} --read-smf-config &"
+start/timeout_seconds                                     count    0
+start/type                                                astring  method
+stop                                                      method
+stop/exec                                                 astring  :kill
+stop/timeout_seconds                                      count    0
+stop/type                                                 astring  method
+refresh                                                   method
+refresh/exec                                              astring  "/opt/oxide/wicketd/bin/wicketd refresh-config /var/svc/manifest/site/wicketd/config.toml --address %{config/address}"
+refresh/timeout_seconds                                   count    0
+refresh/type                                              astring  method
+startd                                                    framework
+startd/duration                                           astring  contract
+config                                                    application
+config/address                                            astring  [::1]:12226
+config/artifact-address                                   astring  [fdb0:a840:2500:1::2]:12227
+config/mgs-address                                        astring  [::1]:12225
+config/nexus-proxy-address                                astring  [::]:12229
+config/rack-subnet                                        astring  fd00:1122:3344::
+config/baseboard-file                                     astring  /opt/oxide/baseboard.json
+general                                                   framework
+general/entity_stability                                  astring  Unstable
+tm_common_name                                            template
+tm_common_name/C                                          ustring  Wicketd
+tm_description                                            template
+tm_description/C                                          ustring  "Technician Port Management Service"
+manifestfiles                                             framework
+manifestfiles/var_svc_manifest_site_wicketd_manifest_xml  astring  /var/svc/manifest/site/wicketd/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/uplink:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    225
+restarter/start_pid                count    3033
+restarter/start_method_timestamp   time     1715915860.994807000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-uplink:default.log
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715917104.975235000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/uplink listprop
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+general/single_instance                                  boolean  true
+fs-minimal                                               dependency
+fs-minimal/entities                                      fmri     svc:/system/filesystem/minimal
+fs-minimal/grouping                                      astring  require_all
+fs-minimal/restart_on                                    astring  restart
+fs-minimal/type                                          astring  service
+net-physical                                             dependency
+net-physical/entities                                    fmri     svc:/network/physical
+net-physical/grouping                                    astring  require_all
+net-physical/restart_on                                  astring  none
+net-physical/type                                        astring  service
+start                                                    method
+start/exec                                               astring  /opt/oxide/dendrite/bin/svc-uplinkd
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+refresh                                                  method
+refresh/exec                                             astring  ":kill -USR1"
+refresh/timeout_seconds                                  count    0
+refresh/type                                             astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    10
+stop/type                                                astring  method
+startd                                                   framework
+startd/ignore_error                                      astring  core,signal
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Sidecar Uplink Sync Daemon"
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_uplink_manifest_xml  astring  /var/svc/manifest/site/uplink/manifest.xml
+uplinks                                                  application
+uplinks/qsfp0_0                                          astring  198.51.101.2/30
+uplinks/qsfp1_0                                          astring  198.51.101.10/30
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mg-ddm:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-mg-ddm:default.log
+restarter/contract                 count    264
+restarter/start_pid                count    3082
+restarter/start_method_timestamp   time     1715915862.008771000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915862.010547000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mg-ddm listprop
+network                                                  dependency
+network/entities                                         fmri     svc:/milestone/network:default
+network/grouping                                         astring  require_all
+network/restart_on                                       astring  none
+network/type                                             astring  service
+start                                                    method
+start/exec                                               astring  "ctrun -l child -o noorphan,regent /opt/oxide/mg-ddm/pkg/ddm_method_script.sh &"
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+refresh                                                  method
+refresh/exec                                             astring  "/opt/oxide/mg-ddm/pkg/refresh_ctrun_child.sh -c %{restarter/contract}"
+refresh/timeout_seconds                                  count    0
+refresh/type                                             astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    0
+stop/type                                                astring  method
+config                                                   application
+config/admin_host                                        astring  ::1
+config/admin_port                                        count    8000
+config/dpd_host                                          astring  
+config/dpd_port                                          astring  
+config/log                                               astring  info
+config/mode                                              astring  transit
+config/rack_uuid                                         astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+config/sled_uuid                                         astring  a994c4a6-04db-4d44-b4d2-e064fae6ca06
+config/dns_servers                                       astring  "[fd00:1122:3344:1::1]:53" "[fd00:1122:3344:2::1]:53" "[fd00:1122:3344:3::1]:53" "[fd00:1122:3344:4::1]:53" "[fd00:1122:3344:5::1]:53"
+config/interfaces                                        astring  "tfportrear0_0/ll" "tfportrear1_0/ll" "tfportrear2_0/ll" "tfportrear3_0/ll"
+config/dendrite                                          boolean  true
+startd                                                   framework
+startd/duration                                          astring  contract
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Maghemite DDM Router"
+tm_description                                           template
+tm_description/C                                         ustring  Router
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_mg-ddm_manifest_xml  astring  /var/svc/manifest/site/mg-ddm/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgd:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-mgd:default.log
+restarter/contract                 count    248
+restarter/start_pid                count    3060
+restarter/start_method_timestamp   time     1715915861.641758000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915861.643792000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgd listprop
+network                                               dependency
+network/entities                                      fmri     svc:/milestone/network:default
+network/grouping                                      astring  require_all
+network/restart_on                                    astring  none
+network/type                                          astring  service
+start                                                 method
+start/exec                                            astring  "ctrun -l child -o noorphan,regent /opt/oxide/mgd/pkg/mgd_method_script.sh &"
+start/timeout_seconds                                 count    0
+start/type                                            astring  method
+refresh                                               method
+refresh/exec                                          astring  "/opt/oxide/mgd/pkg/refresh_ctrun_child.sh -c %{restarter/contract}"
+refresh/timeout_seconds                               count    0
+refresh/type                                          astring  method
+stop                                                  method
+stop/exec                                             astring  :kill
+stop/timeout_seconds                                  count    0
+stop/type                                             astring  method
+config                                                application
+config/admin_host                                     astring  ::
+config/admin_port                                     count    4676
+config/rack_uuid                                      astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+config/sled_uuid                                      astring  a994c4a6-04db-4d44-b4d2-e064fae6ca06
+config/dns_servers                                    astring  "[fd00:1122:3344:1::1]:53" "[fd00:1122:3344:2::1]:53" "[fd00:1122:3344:3::1]:53" "[fd00:1122:3344:4::1]:53" "[fd00:1122:3344:5::1]:53"
+startd                                                framework
+startd/duration                                       astring  contract
+general                                               framework
+general/entity_stability                              astring  Unstable
+tm_common_name                                        template
+tm_common_name/C                                      ustring  "Maghemite Router Daemon"
+tm_description                                        template
+tm_description/C                                      ustring  Router
+manifestfiles                                         framework
+manifestfiles/var_svc_manifest_site_mgd_manifest_xml  astring  /var/svc/manifest/site/mgd/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgs:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-mgs:default.log
+restarter/contract                 count    222
+restarter/start_pid                count    3029
+restarter/start_method_timestamp   time     1715915860.832476000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915860.834252000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgs listprop
+multi_user                                            dependency
+multi_user/entities                                   fmri     svc:/milestone/multi-user:default
+multi_user/grouping                                   astring  require_all
+multi_user/restart_on                                 astring  none
+multi_user/type                                       astring  service
+start                                                 method
+start/exec                                            astring  "/opt/oxide/mgs/bin/mgs run --id-and-address-from-smf /var/svc/manifest/site/mgs/config.toml &"
+start/timeout_seconds                                 count    0
+start/type                                            astring  method
+refresh                                               method
+refresh/exec                                          astring  ":kill -USR1"
+refresh/timeout_seconds                               count    0
+refresh/type                                          astring  method
+stop                                                  method
+stop/exec                                             astring  :kill
+stop/timeout_seconds                                  count    0
+stop/type                                             astring  method
+config                                                application
+config/id                                             astring  0f7f0c3a-f765-4443-95e1-d5fd77b1374e
+config/address                                        astring  "[::1]:12225" "[fd00:1122:3344:101::2]:12225"
+config/rack_id                                        astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+startd                                                framework
+startd/duration                                       astring  contract
+general                                               framework
+general/entity_stability                              astring  Unstable
+tm_common_name                                        template
+tm_common_name/C                                      ustring  "Oxide Management Gateway Service"
+tm_description                                        template
+tm_description/C                                      ustring  "Server for communicating with Oxide Service Processors via the management network"
+manifestfiles                                         framework
+manifestfiles/var_svc_manifest_site_mgs_manifest_xml  astring  /var/svc/manifest/site/mgs/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/lldpd:default listprop 
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-lldpd:default.log
+restarter/contract                 count    214
+restarter/start_pid                count    3016
+restarter/start_method_timestamp   time     1715915860.631160000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915860.632628000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/lldpd listprop 
+general                                                 framework
+general/entity_stability                                astring  Unstable
+general/single_instance                                 boolean  true
+net-physical                                            dependency
+net-physical/entities                                   fmri     svc:/network/physical
+net-physical/grouping                                   astring  require_all
+net-physical/restart_on                                 astring  none
+net-physical/type                                       astring  service
+start                                                   method
+start/exec                                              astring  /opt/oxide/bin/svc-lldpd
+start/timeout_seconds                                   count    0
+start/type                                              astring  method
+refresh                                                 method
+refresh/exec                                            astring  ":kill -USR1"
+refresh/timeout_seconds                                 count    0
+refresh/type                                            astring  method
+stop                                                    method
+stop/exec                                               astring  :kill
+stop/timeout_seconds                                    count    5
+stop/type                                               astring  method
+startd                                                  framework
+startd/ignore_error                                     astring  core,signal
+config                                                  application
+config/scrimlet_id                                      astring  g0
+config/scrimlet_model                                   astring  i86pc
+config/board_rev                                        astring  softnpu_front_2_rear_4
+config/address                                          astring  "[fd00:1122:3344:101::2]:12230" "[::1]:12230"
+tm_common_name                                          template
+tm_common_name/C                                        ustring  "Oxide LLDP Daemon"
+manifestfiles                                           framework
+manifestfiles/var_svc_manifest_site_lldpd_manifest_xml  astring  /var/svc/manifest/site/lldpd/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/dendrite:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-dendrite:default.log
+restarter/contract                 count    204
+restarter/start_pid                count    3003
+restarter/start_method_timestamp   time     1715915860.406194000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915860.407877000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/dendrite listprop
+general                                                    framework
+general/entity_stability                                   astring  Unstable
+general/single_instance                                    boolean  true
+fs-minimal                                                 dependency
+fs-minimal/entities                                        fmri     svc:/system/filesystem/minimal
+fs-minimal/grouping                                        astring  require_all
+fs-minimal/restart_on                                      astring  none
+fs-minimal/type                                            astring  service
+net-physical                                               dependency
+net-physical/entities                                      fmri     svc:/network/physical
+net-physical/grouping                                      astring  require_all
+net-physical/restart_on                                    astring  none
+net-physical/type                                          astring  service
+start                                                      method
+start/exec                                                 astring  /opt/oxide/dendrite/bin/svc-dpd
+start/timeout_seconds                                      count    0
+start/type                                                 astring  method
+refresh                                                    method
+refresh/exec                                               astring  ":kill -USR1"
+refresh/timeout_seconds                                    count    0
+refresh/type                                               astring  method
+stop                                                       method
+stop/exec                                                  astring  :kill
+stop/timeout_seconds                                       count    5
+stop/type                                                  astring  method
+config                                                     application
+config/enable_rpw                                          astring  true
+config/log_file                                            astring  unknown
+config/log_format                                          astring  unknown
+config/mac_base                                            astring  unknown
+config/nexus_address                                       astring  unknown
+config/uds_path                                            astring  unknown
+config/rack_id                                             astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+config/sled_id                                             astring  a994c4a6-04db-4d44-b4d2-e064fae6ca06
+config/dns_server                                          astring  "[fd00:1122:3344:1::1]:53" "[fd00:1122:3344:2::1]:53" "[fd00:1122:3344:3::1]:53" "[fd00:1122:3344:4::1]:53" "[fd00:1122:3344:5::1]:53"
+config/address                                             astring  "[fd00:1122:3344:101::2]:12224" "[::1]:12224"
+config/mgmt                                                astring  uart
+config/front_ports                                         astring  2
+config/rear_ports                                          astring  4
+config/port_config                                         astring  /opt/oxide/dendrite/misc/softnpu_single_sled_config.toml
+startd                                                     framework
+startd/ignore_error                                        astring  core,signal
+tm_common_name                                             template
+tm_common_name/C                                           ustring  "Sidecar Dataplane Daemon"
+manifestfiles                                              framework
+manifestfiles/var_svc_manifest_site_dendrite_manifest_xml  astring  /var/svc/manifest/site/dendrite/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/tfport:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-tfport:default.log
+restarter/contract                 count    272
+restarter/start_pid                count    3103
+restarter/start_method_timestamp   time     1715915862.236652000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915862.238682000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/tfport listprop
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+general/single_instance                                  boolean  true
+fs-minimal                                               dependency
+fs-minimal/entities                                      fmri     svc:/system/filesystem/minimal
+fs-minimal/grouping                                      astring  require_all
+fs-minimal/restart_on                                    astring  none
+fs-minimal/type                                          astring  service
+net-physical                                             dependency
+net-physical/entities                                    fmri     svc:/network/physical
+net-physical/grouping                                    astring  require_all
+net-physical/restart_on                                  astring  none
+net-physical/type                                        astring  service
+start                                                    method
+start/exec                                               astring  "ctrun -l child -o noorphan,regent /opt/oxide/dendrite/bin/tfportd %{config/flags} --pkt-source %{config/pkt_source} &"
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    10
+stop/type                                                astring  method
+config                                                   application
+config/flags                                             astring  
+config/pkt_source                                        astring  vioif0
+config/host                                              astring  [::1]
+config/port                                              astring  12224
+startd                                                   framework
+startd/ignore_error                                      astring  core,signal
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Sidecar Tfportd Daemon"
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_tfport_manifest_xml  astring  /var/svc/manifest/site/tfport/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/sp-sim:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-sp-sim:default.log
+restarter/contract                 count    275
+restarter/start_pid                count    3117
+restarter/start_method_timestamp   time     1715915862.444273000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915862.445954000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/sp-sim listprop
+multi_user                                               dependency
+multi_user/entities                                      fmri     svc:/milestone/multi-user:default
+multi_user/grouping                                      astring  require_all
+multi_user/restart_on                                    astring  none
+multi_user/type                                          astring  service
+start                                                    method
+start/exec                                               astring  "ctrun -l child -o noorphan,regent /opt/oxide/sp-sim/bin/sp-sim /var/svc/manifest/site/sp-sim/config.toml &"
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+refresh                                                  method
+refresh/exec                                             astring  ":kill -USR1"
+refresh/timeout_seconds                                  count    0
+refresh/type                                             astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    0
+stop/type                                                astring  method
+startd                                                   framework
+startd/duration                                          astring  contract
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Oxide Simulated Service Processor"
+tm_description                                           template
+tm_description/C                                         ustring  "Server for simulating a Service Processor, intended for development and testing."
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_sp-sim_manifest_xml  astring  /var/svc/manifest/site/sp-sim/manifest.xml
+
+root@oxz_switch:~# ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+tfportqsfp0_0/uplink1 static ok         198.51.101.2/30
+tfportqsfp1_0/uplink1 static ok         198.51.101.10/30
+lo0/v6            static   ok           ::1/128
+oxControlService30/ll addrconf ok       fe80::8:20ff:fe77:94d6%oxControlService30/10
+oxControlService30/omicron6 static ok   fd00:1122:3344:101::2/64
+oxBootstrap30/ll  addrconf ok           fe80::8:20ff:fe42:4627%oxBootstrap30/10
+oxBootstrap30/bootstrap6 static ok      fdb0:a840:2500:1::2/64
+tfportint0_0/ll   addrconf ok           fe80::aa40:25ff:fe1f:e5bb%tfportint0_0/10
+tfportrear0_0/ll  addrconf ok           fe80::aa40:25ff:fe1f:e5bc%tfportrear0_0/10
+tfportrear1_0/ll  addrconf ok           fe80::aa40:25ff:fe1f:e5bd%tfportrear1_0/10
+tfportrear2_0/ll  addrconf ok           fe80::aa40:25ff:fe1f:e5be%tfportrear2_0/10
+tfportrear3_0/ll  addrconf ok           fe80::aa40:25ff:fe1f:e5bf%tfportrear3_0/10
+
+root@oxz_switch:~# dladm
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+vioif0      phys      1500   up       ?          --
+oxBootstrap30 vnic    1500   up       --         ?
+oxControlService30 vnic 9000 up       --         ?
+tfport0     tfport    1500   up       --         vioif0
+tfportint0_0 tfport   1500   up       --         vioif0
+tfportrear0_0 tfport  1500   up       --         vioif0
+tfportrear1_0 tfport  1500   up       --         vioif0
+tfportrear2_0 tfport  1500   up       --         vioif0
+tfportrear3_0 tfport  1500   up       --         vioif0
+tfportqsfp0_0 tfport  1500   up       --         vioif0
+tfportqsfp1_0 tfport  1500   up       --         vioif0
+
+root@g0:~# ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+vioif3/v4         dhcp     ok           192.168.50.81/24
+lo0/v6            static   ok           ::1/128
+vioif1/ll         addrconf ok           fe80::aa40:25ff:fe00:1%vioif1/10
+vioif2/ll         addrconf ok           fe80::aa40:25ff:fe00:2%vioif2/10
+bootstrap0/ll     addrconf ok           fe80::8:20ff:fea8:c9de%bootstrap0/10
+bootstrap0/bootstrap6 static ok         fdb0:a840:2500:1::1/64
+underlay0/ll      addrconf ok           fe80::8:20ff:fe02:9150%underlay0/10
+underlay0/sled6   static   ok           fd00:1122:3344:101::1/64
+underlay0/internaldns0 static ok        fd00:1122:3344:1::2/64
+
+root@g0:~# dladm
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+vioif0      phys      1500   up       --         --
+vioif1      phys      9000   up       --         --
+vioif2      phys      9000   up       --         --
+vioif3      phys      1500   up       --         --
+tfpkt0      phys      1500   down     --         --
+bootstrap_stub0 etherstub 9000 up     --         --
+bootstrap0  vnic      1500   up       --         bootstrap_stub0
+underlay_stub0 etherstub 9000 up      --         --
+underlay0   vnic      9000   up       --         underlay_stub0
+oxBootstrap30 vnic    1500   up       --         bootstrap_stub0
+oxControlService30 vnic 9000 up       --         underlay_stub0
+oxControlService31 vnic 9000 up       --         underlay_stub0
+opte0       misc      1500   up       --         --
+vopte0      vnic      1500   up       --         opte0
+oxControlService32 vnic 9000 up       --         underlay_stub0
+oxControlService33 vnic 9000 up       --         underlay_stub0
+oxControlService34 vnic 9000 up       --         underlay_stub0
+oxControlService35 vnic 9000 up       --         underlay_stub0
+oxControlService36 vnic 9000 up       --         underlay_stub0
+oxControlService37 vnic 9000 up       --         underlay_stub0
+oxControlService38 vnic 9000 up       --         underlay_stub0
+oxControlService39 vnic 9000 up       --         underlay_stub0
+opte1       misc      1500   up       --         --
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+vopte1      vnic      1500   up       --         opte1
+opte2       misc      1500   up       --         --
+vopte2      vnic      1500   up       --         opte2
+oxControlService40 vnic 9000 up       --         underlay_stub0
+oxControlService41 vnic 9000 up       --         underlay_stub0
+
+// Switch on g3
+
+root@oxz_switch:~# svccfg -s svc:/oxide/wicketd:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    216
+restarter/start_pid                count    2952
+restarter/start_method_timestamp   time     1715915851.667185000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-wicketd:default.log
+restarter/transient_contract       count   
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915863.407389000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/wicketd listprop
+multi_user                                                dependency
+multi_user/entities                                       fmri     svc:/milestone/multi-user:default
+multi_user/grouping                                       astring  require_all
+multi_user/restart_on                                     astring  none
+multi_user/type                                           astring  service
+start                                                     method
+start/exec                                                astring  "ctrun -l child -o noorphan,regent /opt/oxide/wicketd/bin/wicketd run /var/svc/manifest/site/wicketd/config.toml --address %{config/address} --artifact-address %{config/artifact-address} --mgs-address %{config/mgs-address} --nexus-proxy-address %{config/nexus-proxy-address} --baseboard-file %{config/baseboard-file} --read-smf-config &"
+start/timeout_seconds                                     count    0
+start/type                                                astring  method
+stop                                                      method
+stop/exec                                                 astring  :kill
+stop/timeout_seconds                                      count    0
+stop/type                                                 astring  method
+refresh                                                   method
+refresh/exec                                              astring  "/opt/oxide/wicketd/bin/wicketd refresh-config /var/svc/manifest/site/wicketd/config.toml --address %{config/address}"
+refresh/timeout_seconds                                   count    0
+refresh/type                                              astring  method
+startd                                                    framework
+startd/duration                                           astring  contract
+config                                                    application
+config/address                                            astring  [::1]:12226
+config/artifact-address                                   astring  [fdb0:a840:2500:7::2]:12227
+config/mgs-address                                        astring  [::1]:12225
+config/nexus-proxy-address                                astring  [::]:12229
+config/baseboard-file                                     astring  /opt/oxide/baseboard.json
+config/rack-subnet                                        astring  fd00:1122:3344::
+general                                                   framework
+general/entity_stability                                  astring  Unstable
+tm_common_name                                            template
+tm_common_name/C                                          ustring  Wicketd
+tm_description                                            template
+tm_description/C                                          ustring  "Technician Port Management Service"
+manifestfiles                                             framework
+manifestfiles/var_svc_manifest_site_wicketd_manifest_xml  astring  /var/svc/manifest/site/wicketd/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/uplink:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    207
+restarter/start_pid                count    2940
+restarter/start_method_timestamp   time     1715915851.441724000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-uplink:default.log
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715918530.609795000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/uplink listprop
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+general/single_instance                                  boolean  true
+fs-minimal                                               dependency
+fs-minimal/entities                                      fmri     svc:/system/filesystem/minimal
+fs-minimal/grouping                                      astring  require_all
+fs-minimal/restart_on                                    astring  restart
+fs-minimal/type                                          astring  service
+net-physical                                             dependency
+net-physical/entities                                    fmri     svc:/network/physical
+net-physical/grouping                                    astring  require_all
+net-physical/restart_on                                  astring  none
+net-physical/type                                        astring  service
+start                                                    method
+start/exec                                               astring  /opt/oxide/dendrite/bin/svc-uplinkd
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+refresh                                                  method
+refresh/exec                                             astring  ":kill -USR1"
+refresh/timeout_seconds                                  count    0
+refresh/type                                             astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    10
+stop/type                                                astring  method
+startd                                                   framework
+startd/ignore_error                                      astring  core,signal
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Sidecar Uplink Sync Daemon"
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_uplink_manifest_xml  astring  /var/svc/manifest/site/uplink/manifest.xml
+uplinks                                                  application
+uplinks/qsfp0_0                                          astring  198.51.101.6/30
+uplinks/qsfp1_0                                          astring  198.51.101.14/30
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mg-ddm:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    231
+restarter/start_pid                count    2974
+restarter/start_method_timestamp   time     1715915852.080904000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-mg-ddm:default.log
+restarter/transient_contract       count   
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915863.803047000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mg-ddm listprop
+network                                                  dependency
+network/entities                                         fmri     svc:/milestone/network:default
+network/grouping                                         astring  require_all
+network/restart_on                                       astring  none
+network/type                                             astring  service
+start                                                    method
+start/exec                                               astring  "ctrun -l child -o noorphan,regent /opt/oxide/mg-ddm/pkg/ddm_method_script.sh &"
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+refresh                                                  method
+refresh/exec                                             astring  "/opt/oxide/mg-ddm/pkg/refresh_ctrun_child.sh -c %{restarter/contract}"
+refresh/timeout_seconds                                  count    0
+refresh/type                                             astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    0
+stop/type                                                astring  method
+config                                                   application
+config/admin_host                                        astring  ::1
+config/admin_port                                        count    8000
+config/dpd_host                                          astring  
+config/dpd_port                                          astring  
+config/log                                               astring  info
+config/interfaces                                        astring  "tfportrear0_0/ll" "tfportrear1_0/ll" "tfportrear2_0/ll" "tfportrear3_0/ll"
+config/dendrite                                          boolean  true
+config/mode                                              astring  transit
+config/rack_uuid                                         astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+config/sled_uuid                                         astring  23516425-a6d7-4229-bc05-f112f4d0c645
+config/dns_servers                                       astring  "[fd00:1122:3344:1::1]:53" "[fd00:1122:3344:2::1]:53" "[fd00:1122:3344:3::1]:53" "[fd00:1122:3344:4::1]:53" "[fd00:1122:3344:5::1]:53"
+startd                                                   framework
+startd/duration                                          astring  contract
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Maghemite DDM Router"
+tm_description                                           template
+tm_description/C                                         ustring  Router
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_mg-ddm_manifest_xml  astring  /var/svc/manifest/site/mg-ddm/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgd:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    222
+restarter/start_pid                count    2959
+restarter/start_method_timestamp   time     1715915851.852136000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-mgd:default.log
+restarter/transient_contract       count   
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915863.524167000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgd listprop
+network                                               dependency
+network/entities                                      fmri     svc:/milestone/network:default
+network/grouping                                      astring  require_all
+network/restart_on                                    astring  none
+network/type                                          astring  service
+start                                                 method
+start/exec                                            astring  "ctrun -l child -o noorphan,regent /opt/oxide/mgd/pkg/mgd_method_script.sh &"
+start/timeout_seconds                                 count    0
+start/type                                            astring  method
+refresh                                               method
+refresh/exec                                          astring  "/opt/oxide/mgd/pkg/refresh_ctrun_child.sh -c %{restarter/contract}"
+refresh/timeout_seconds                               count    0
+refresh/type                                          astring  method
+stop                                                  method
+stop/exec                                             astring  :kill
+stop/timeout_seconds                                  count    0
+stop/type                                             astring  method
+config                                                application
+config/admin_host                                     astring  ::
+config/admin_port                                     count    4676
+config/rack_uuid                                      astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+config/sled_uuid                                      astring  23516425-a6d7-4229-bc05-f112f4d0c645
+config/dns_servers                                    astring  "[fd00:1122:3344:1::1]:53" "[fd00:1122:3344:2::1]:53" "[fd00:1122:3344:3::1]:53" "[fd00:1122:3344:4::1]:53" "[fd00:1122:3344:5::1]:53"
+startd                                                framework
+startd/duration                                       astring  contract
+general                                               framework
+general/entity_stability                              astring  Unstable
+tm_common_name                                        template
+tm_common_name/C                                      ustring  "Maghemite Router Daemon"
+tm_description                                        template
+tm_description/C                                      ustring  Router
+manifestfiles                                         framework
+manifestfiles/var_svc_manifest_site_mgd_manifest_xml  astring  /var/svc/manifest/site/mgd/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgs:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    204
+restarter/start_pid                count    2936
+restarter/start_method_timestamp   time     1715915851.274216000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-mgs:default.log
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915863.270956000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/mgs listprop
+multi_user                                            dependency
+multi_user/entities                                   fmri     svc:/milestone/multi-user:default
+multi_user/grouping                                   astring  require_all
+multi_user/restart_on                                 astring  none
+multi_user/type                                       astring  service
+start                                                 method
+start/exec                                            astring  "/opt/oxide/mgs/bin/mgs run --id-and-address-from-smf /var/svc/manifest/site/mgs/config.toml &"
+start/timeout_seconds                                 count    0
+start/type                                            astring  method
+refresh                                               method
+refresh/exec                                          astring  ":kill -USR1"
+refresh/timeout_seconds                               count    0
+refresh/type                                          astring  method
+stop                                                  method
+stop/exec                                             astring  :kill
+stop/timeout_seconds                                  count    0
+stop/type                                             astring  method
+config                                                application
+config/id                                             astring  d933ac47-6580-4261-8a18-cab7d332dc78
+config/address                                        astring  "[::1]:12225" "[fd00:1122:3344:104::2]:12225"
+config/rack_id                                        astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+startd                                                framework
+startd/duration                                       astring  contract
+general                                               framework
+general/entity_stability                              astring  Unstable
+tm_common_name                                        template
+tm_common_name/C                                      ustring  "Oxide Management Gateway Service"
+tm_description                                        template
+tm_description/C                                      ustring  "Server for communicating with Oxide Service Processors via the management network"
+manifestfiles                                         framework
+manifestfiles/var_svc_manifest_site_mgs_manifest_xml  astring  /var/svc/manifest/site/mgs/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/lldpd:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-lldpd:default.log
+restarter/contract                 count    271
+restarter/start_pid                count    3179
+restarter/start_method_timestamp   time     1715915863.100833000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915863.103582000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/lldpd listprop
+general                                                 framework
+general/entity_stability                                astring  Unstable
+general/single_instance                                 boolean  true
+net-physical                                            dependency
+net-physical/entities                                   fmri     svc:/network/physical
+net-physical/grouping                                   astring  require_all
+net-physical/restart_on                                 astring  none
+net-physical/type                                       astring  service
+start                                                   method
+start/exec                                              astring  /opt/oxide/bin/svc-lldpd
+start/timeout_seconds                                   count    0
+start/type                                              astring  method
+refresh                                                 method
+refresh/exec                                            astring  ":kill -USR1"
+refresh/timeout_seconds                                 count    0
+refresh/type                                            astring  method
+stop                                                    method
+stop/exec                                               astring  :kill
+stop/timeout_seconds                                    count    5
+stop/type                                               astring  method
+startd                                                  framework
+startd/ignore_error                                     astring  core,signal
+config                                                  application
+config/scrimlet_id                                      astring  g3
+config/scrimlet_model                                   astring  i86pc
+config/board_rev                                        astring  softnpu_front_2_rear_4
+config/address                                          astring  "[fd00:1122:3344:104::2]:12230" "[::1]:12230"
+tm_common_name                                          template
+tm_common_name/C                                        ustring  "Oxide LLDP Daemon"
+manifestfiles                                           framework
+manifestfiles/var_svc_manifest_site_lldpd_manifest_xml  astring  /var/svc/manifest/site/lldpd/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/dendrite:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/contract                 count    189
+restarter/start_pid                count    2913
+restarter/start_method_timestamp   time     1715915850.877180000
+restarter/start_method_waitstatus  integer  0
+restarter/logfile                  astring  /var/svc/log/oxide-dendrite:default.log
+restarter/auxiliary_state          astring  none
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915862.928528000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+restarter_actions/refresh          integer 
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/dendrite listprop
+general                                                    framework
+general/entity_stability                                   astring  Unstable
+general/single_instance                                    boolean  true
+fs-minimal                                                 dependency
+fs-minimal/entities                                        fmri     svc:/system/filesystem/minimal
+fs-minimal/grouping                                        astring  require_all
+fs-minimal/restart_on                                      astring  none
+fs-minimal/type                                            astring  service
+net-physical                                               dependency
+net-physical/entities                                      fmri     svc:/network/physical
+net-physical/grouping                                      astring  require_all
+net-physical/restart_on                                    astring  none
+net-physical/type                                          astring  service
+start                                                      method
+start/exec                                                 astring  /opt/oxide/dendrite/bin/svc-dpd
+start/timeout_seconds                                      count    0
+start/type                                                 astring  method
+refresh                                                    method
+refresh/exec                                               astring  ":kill -USR1"
+refresh/timeout_seconds                                    count    0
+refresh/type                                               astring  method
+stop                                                       method
+stop/exec                                                  astring  :kill
+stop/timeout_seconds                                       count    5
+stop/type                                                  astring  method
+config                                                     application
+config/enable_rpw                                          astring  true
+config/log_file                                            astring  unknown
+config/log_format                                          astring  unknown
+config/mac_base                                            astring  unknown
+config/nexus_address                                       astring  unknown
+config/uds_path                                            astring  unknown
+config/mgmt                                                astring  uart
+config/front_ports                                         astring  2
+config/rear_ports                                          astring  4
+config/port_config                                         astring  /opt/oxide/dendrite/misc/softnpu_single_sled_config.toml
+config/rack_id                                             astring  0c8cc89a-2644-4a8a-b38f-d458afe16fc3
+config/sled_id                                             astring  23516425-a6d7-4229-bc05-f112f4d0c645
+config/dns_server                                          astring  "[fd00:1122:3344:1::1]:53" "[fd00:1122:3344:2::1]:53" "[fd00:1122:3344:3::1]:53" "[fd00:1122:3344:4::1]:53" "[fd00:1122:3344:5::1]:53"
+config/address                                             astring  "[fd00:1122:3344:104::2]:12224" "[::1]:12224"
+startd                                                     framework
+startd/ignore_error                                        astring  core,signal
+tm_common_name                                             template
+tm_common_name/C                                           ustring  "Sidecar Dataplane Daemon"
+manifestfiles                                              framework
+manifestfiles/var_svc_manifest_site_dendrite_manifest_xml  astring  /var/svc/manifest/site/dendrite/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/tfport:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-tfport:default.log
+restarter/contract                 count    239
+restarter/start_pid                count    2994
+restarter/start_method_timestamp   time     1715915852.285094000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915852.286842000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/tfport listprop
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+general/single_instance                                  boolean  true
+fs-minimal                                               dependency
+fs-minimal/entities                                      fmri     svc:/system/filesystem/minimal
+fs-minimal/grouping                                      astring  require_all
+fs-minimal/restart_on                                    astring  none
+fs-minimal/type                                          astring  service
+net-physical                                             dependency
+net-physical/entities                                    fmri     svc:/network/physical
+net-physical/grouping                                    astring  require_all
+net-physical/restart_on                                  astring  none
+net-physical/type                                        astring  service
+start                                                    method
+start/exec                                               astring  "ctrun -l child -o noorphan,regent /opt/oxide/dendrite/bin/tfportd %{config/flags} --pkt-source %{config/pkt_source} &"
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    10
+stop/type                                                astring  method
+config                                                   application
+config/flags                                             astring  
+config/pkt_source                                        astring  vioif0
+config/host                                              astring  [::1]
+config/port                                              astring  12224
+startd                                                   framework
+startd/ignore_error                                      astring  core,signal
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Sidecar Tfportd Daemon"
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_tfport_manifest_xml  astring  /var/svc/manifest/site/tfport/manifest.xml
+
+root@oxz_switch:~# svccfg -s svc:/oxide/sp-sim:default listprop
+general                            framework
+general/enabled                    boolean  false
+restarter                          framework    NONPERSISTENT
+restarter/logfile                  astring  /var/svc/log/oxide-sp-sim:default.log
+restarter/contract                 count    242
+restarter/start_pid                count    3014
+restarter/start_method_timestamp   time     1715915852.451216000
+restarter/start_method_waitstatus  integer  0
+restarter/auxiliary_state          astring  dependencies_satisfied
+restarter/next_state               astring  none
+restarter/state                    astring  online
+restarter/state_timestamp          time     1715915852.453215000
+restarter_actions                  framework    NONPERSISTENT
+restarter_actions/refresh          integer 
+restarter_actions/auxiliary_tty    boolean  false
+restarter_actions/auxiliary_fmri   astring  svc:/system/zone_enter:default
+general_ovr                        framework    NONPERSISTENT
+general_ovr/comment                astring  
+general_ovr/enabled                boolean  true
+
+root@oxz_switch:~# svccfg -s svc:/oxide/sp-sim listprop
+multi_user                                               dependency
+multi_user/entities                                      fmri     svc:/milestone/multi-user:default
+multi_user/grouping                                      astring  require_all
+multi_user/restart_on                                    astring  none
+multi_user/type                                          astring  service
+start                                                    method
+start/exec                                               astring  "ctrun -l child -o noorphan,regent /opt/oxide/sp-sim/bin/sp-sim /var/svc/manifest/site/sp-sim/config.toml &"
+start/timeout_seconds                                    count    0
+start/type                                               astring  method
+refresh                                                  method
+refresh/exec                                             astring  ":kill -USR1"
+refresh/timeout_seconds                                  count    0
+refresh/type                                             astring  method
+stop                                                     method
+stop/exec                                                astring  :kill
+stop/timeout_seconds                                     count    0
+stop/type                                                astring  method
+startd                                                   framework
+startd/duration                                          astring  contract
+general                                                  framework
+general/entity_stability                                 astring  Unstable
+tm_common_name                                           template
+tm_common_name/C                                         ustring  "Oxide Simulated Service Processor"
+tm_description                                           template
+tm_description/C                                         ustring  "Server for simulating a Service Processor, intended for development and testing."
+manifestfiles                                            framework
+manifestfiles/var_svc_manifest_site_sp-sim_manifest_xml  astring  /var/svc/manifest/site/sp-sim/manifest.xml
+
+root@oxz_switch:~# ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+tfportqsfp0_0/uplink1 static ok         198.51.101.6/30
+tfportqsfp1_0/uplink1 static ok         198.51.101.14/30
+lo0/v6            static   ok           ::1/128
+oxControlService29/ll addrconf ok       fe80::8:20ff:fe35:ee7b%oxControlService29/10
+oxControlService29/omicron6 static ok   fd00:1122:3344:104::2/64
+oxBootstrap29/ll  addrconf ok           fe80::8:20ff:fed0:57e3%oxBootstrap29/10
+oxBootstrap29/bootstrap6 static ok      fdb0:a840:2500:7::2/64
+tfportint0_0/ll   addrconf ok           fe80::aa40:25ff:fe5a:6047%tfportint0_0/10
+tfportrear0_0/ll  addrconf ok           fe80::aa40:25ff:fe5a:6048%tfportrear0_0/10
+tfportrear1_0/ll  addrconf ok           fe80::aa40:25ff:fe5a:6049%tfportrear1_0/10
+tfportrear2_0/ll  addrconf ok           fe80::aa40:25ff:fe5a:604a%tfportrear2_0/10
+tfportrear3_0/ll  addrconf ok           fe80::aa40:25ff:fe5a:604b%tfportrear3_0/10
+
+root@oxz_switch:~# dladm
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+vioif0      phys      1500   up       ?          --
+oxBootstrap29 vnic    1500   up       --         ?
+oxControlService29 vnic 9000 up       --         ?
+tfport0     tfport    1500   up       --         vioif0
+tfportint0_0 tfport   1500   up       --         vioif0
+tfportrear0_0 tfport  1500   up       --         vioif0
+tfportrear1_0 tfport  1500   up       --         vioif0
+tfportrear2_0 tfport  1500   up       --         vioif0
+tfportrear3_0 tfport  1500   up       --         vioif0
+tfportqsfp0_0 tfport  1500   up       --         vioif0
+tfportqsfp1_0 tfport  1500   up       --         vioif0
+
+root@g3:~# ipadm
+ADDROBJ           TYPE     STATE        ADDR
+lo0/v4            static   ok           127.0.0.1/8
+vioif3/v4         dhcp     ok           192.168.50.63/24
+lo0/v6            static   ok           ::1/128
+vioif1/ll         addrconf ok           fe80::aa40:25ff:fe00:7%vioif1/10
+vioif2/ll         addrconf ok           fe80::aa40:25ff:fe00:8%vioif2/10
+bootstrap0/ll     addrconf ok           fe80::8:20ff:fe18:39f1%bootstrap0/10
+bootstrap0/bootstrap6 static ok         fdb0:a840:2500:7::1/64
+underlay0/ll      addrconf ok           fe80::8:20ff:fef7:45dc%underlay0/10
+underlay0/sled6   static   ok           fd00:1122:3344:104::1/64
+
+root@g3:~# dladm
+LINK        CLASS     MTU    STATE    BRIDGE     OVER
+vioif0      phys      1500   up       --         --
+vioif1      phys      9000   up       --         --
+vioif2      phys      9000   up       --         --
+vioif3      phys      1500   up       --         --
+tfpkt0      phys      1500   down     --         --
+bootstrap_stub0 etherstub 9000 up     --         --
+bootstrap0  vnic      1500   up       --         bootstrap_stub0
+underlay_stub0 etherstub 9000 up      --         --
+underlay0   vnic      9000   up       --         underlay_stub0
+oxBootstrap29 vnic    1500   up       --         bootstrap_stub0
+oxControlService29 vnic 9000 up       --         underlay_stub0
+oxControlService30 vnic 9000 up       --         underlay_stub0
+oxControlService31 vnic 9000 up       --         underlay_stub0
+oxControlService32 vnic 9000 up       --         underlay_stub0
+oxControlService33 vnic 9000 up       --         underlay_stub0
+oxControlService34 vnic 9000 up       --         underlay_stub0
+oxControlService35 vnic 9000 up       --         underlay_stub0
+oxControlService36 vnic 9000 up       --         underlay_stub0
+oxControlService37 vnic 9000 up       --         underlay_stub0
+oxControlService38 vnic 9000 up       --         underlay_stub0
+opte0       misc      1500   up       --         --
+vopte0      vnic      1500   up       --         opte0
+oxControlService39 vnic 9000 up       --         underlay_stub0
+
+root@oxz_switch:~# cat /var/svc/log/oxide-uplink:default.log
+[ May 31 05:04:11 Disabled. ]
+[ May 31 05:04:11 Rereading configuration. ]
+[ May 31 05:04:24 Rereading configuration. ]
+[ May 31 05:04:24 Enabled. ]
+[ May 31 05:04:24 Executing start method ("/opt/oxide/dendrite/bin/svc-uplinkd"). ]
+[ May 31 05:04:24 Method "start" exited with status 0. ]
+May 31 05:04:24.780 INFO SMF properties refreshed
+[ May 31 05:04:29 Rereading configuration. ]
+[ May 31 05:04:29 Executing refresh method (:kill). ]
+May 31 05:04:29.371 INFO handling SMF refresh
+May 31 05:04:29.372 INFO SMF properties refreshed
+May 31 05:04:29.961 INFO created 198.51.101.2/30 as addrobj tfportqsfp0_0/uplink1
+May 31 05:04:30.509 INFO created 198.51.101.10/30 as addrobj tfportqsfp1_0/uplink1
+
+root@oxz_switch:~# svcprop -p uplinks uplink
+uplinks/qsfp0_0 astring 198.51.101.2/30
+uplinks/qsfp1_0 astring 198.51.101.10/30
+
+---- On scrimlet that gets refreshed ----------
+
+root@oxz_switch:~# cat /var/svc/log/oxide-uplink:default.log
+[ May 31 05:05:04 Disabled. ]
+[ May 31 05:05:04 Rereading configuration. ]
+[ May 31 05:05:18 Rereading configuration. ]
+[ May 31 05:05:18 Enabled. ]
+[ May 31 05:05:18 Executing start method ("/opt/oxide/dendrite/bin/svc-uplinkd"). ]
+[ May 31 05:05:18 Method "start" exited with status 0. ]
+May 31 05:05:18.158 INFO SMF properties refreshed
+[ May 31 05:05:20 Rereading configuration. ]
+[ May 31 05:05:20 Executing refresh method (:kill). ]
+May 31 05:05:20.989 INFO handling SMF refresh
+May 31 05:05:20.990 INFO SMF properties refreshed
+May 31 05:05:20.999 ERRO failed to get addresses for tfportqsfp0_0: ipadm: Could not get address: Interface does not exist
+May 31 05:05:21.002 ERRO failed to get addresses for tfportqsfp1_0: ipadm: Could not get address: Interface does not exist
+May 31 05:05:21.002 INFO skipping addresses for missing interface tfportqsfp0_0
+May 31 05:05:21.002 INFO skipping addresses for missing interface tfportqsfp1_0
+May 31 05:05:22.539 INFO created 198.51.101.6/30 as addrobj tfportqsfp0_0/uplink1
+May 31 05:05:23.061 INFO created 198.51.101.14/30 as addrobj tfportqsfp1_0/uplink1
+
+root@oxz_switch:~# svcprop -p uplinks uplink
+uplinks/qsfp0_0 astring 198.51.101.6/30
+uplinks/qsfp1_0 astring 198.51.101.14/30

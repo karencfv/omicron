@@ -1,0 +1,483 @@
+root@g3:~# cat $(svcs -L sled-agent) | grep DEBUG | looker
+04:25:35.738Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Checking current full hardware snapshot
+    disks = {}
+    file = sled-agent/src/hardware_monitor.rs:281
+    underlay_network_info = None
+04:25:35.740Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Scrimlet driver loaded, running HardwareMonitor::activate_switch()
+    file = sled-agent/src/hardware_monitor.rs:288
+04:25:35.740Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino not ready
+    file = sled-agent/src/hardware_monitor.rs:250
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG SERVICE MANAGER: New service manager config
+    bootstrap_vnic_allocator = VnicAllocator {\n    value: 0,\n    scope: "Bootstrap",\n    data_link: Etherstub(\n        "bootstrap_stub0",\n    ),\n    destructor: Destructor {\n        inner: Mutex {\n            data: Inner {\n                tx: UnboundedSender {\n                    chan: Tx {\n                        inner: Chan {\n                            tx: Tx {\n                                block_tail: 0x0000000003a048d0,\n                                tail_position: 0,\n                            },\n                            semaphore: Semaphore(\n                                0,\n                            ),\n                            rx_waker: AtomicWaker,\n                            tx_count: 1,\n                            rx_fields: "...",\n                        },\n                    },\n                },\n                handle: Some(\n                    JoinHandle {\n                        id: Id(\n                            29,\n                        ),\n                    },\n                ),\n            },\n            poisoned: false,\n            ..\n        },\n    },\n}
+    ddmd_client = Client {\n    inner: Client {\n        baseurl: "http://[::1]:8000",\n        client: Client {\n            accepts: Accepts,\n            proxies: [\n                Proxy(\n                    System(\n                        {},\n                    ),\n                    None,\n                ),\n            ],\n            referer: true,\n            default_headers: {\n                "accept": "*/*",\n            },\n            timeout: 60s,\n        },\n        inner: Logger(DdmAdminClient, component),\n    },\n    log: Logger(DdmAdminClient, component),\n}
+    file = sled-agent/src/services.rs:715
+    global_zone_bootstrap_link_local_address = fe80::8:20ff:fe89:c579
+    switch_zone = Mutex::new(SledLocalZone::Disabled)
+    switch_zone_bootstrap_address = fdb0:a840:2500:7::2
+    switch_zone_maghemite_links = [\n    PhysicalLink(\n        "tfportrear0_0",\n    ),\n    PhysicalLink(\n        "tfportrear1_0",\n    ),\n    PhysicalLink(\n        "tfportrear2_0",\n    ),\n    PhysicalLink(\n        "tfportrear3_0",\n    ),\n]
+    underlay_vnic = EtherstubVnic(\n    "underlay0",\n)
+    underlay_vnic_allocator = VnicAllocator {\n    value: 0,\n    scope: "Service",\n    data_link: Etherstub(\n        "underlay_stub0",\n    ),\n    destructor: Destructor {\n        inner: Mutex {\n            data: Inner {\n                tx: UnboundedSender {\n                    chan: Tx {\n                        inner: Chan {\n                            tx: Tx {\n                                block_tail: 0x0000000003c90050,\n                                tail_position: 0,\n                            },\n                            semaphore: Semaphore(\n                                0,\n                            ),\n                            rx_waker: AtomicWaker,\n                            tx_count: 1,\n                            rx_fields: "...",\n                        },\n                    },\n                },\n                handle: Some(\n                    JoinHandle {\n                        id: Id(\n                            30,\n                        ),\n                    },\n                ),\n            },\n            poisoned: false,\n            ..\n        },\n    },\n}
+    zones = Mutex::new(BTreeMap::new())
+04:25:37.018Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino is loaded, running HardwareMonitor::activate_switch()
+    file = sled-agent/src/hardware_monitor.rs:148
+04:25:37.018Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino is ready, activating switch
+    baseboard = Pc {\n    identifier: "g3",\n    model: "i86pc",\n}
+    file = sled-agent/src/hardware_monitor.rs:229
+    underlay_info = None
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Ensuring scrimlet services (enabling services). 
+            If we're reconfiguring the switch zone with an underlay address, we also need the rack network
+            config to set tfport uplinks.
+    baseboard = Pc {\n    identifier: "g3",\n    model: "i86pc",\n}
+    file = sled-agent/src/services.rs:4399
+    underlay_info = None
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Will ensure zone with new addresses and services
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:4492
+    filesystems = ty: lofs, dir: /opt/softnpu/stuff, special: /var/run/softnpu/sidecar
+    request = SwitchZoneConfig {\n    id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n    addresses: [\n        ::1,\n    ],\n    services: [\n        Dendrite {\n            asic: SoftNpuPropolisDevice,\n        },\n        Lldpd {\n            baseboard: Pc {\n                identifier: "g3",\n                model: "i86pc",\n            },\n        },\n        ManagementGatewayService,\n        Uplink,\n        Wicketd {\n            baseboard: Pc {\n                identifier: "g3",\n                model: "i86pc",\n            },\n        },\n        Mgd,\n        MgDdm {\n            mode: "transit",\n        },\n        Tfport {\n            pkt_source: "vioif0",\n            asic: SoftNpuPropolisDevice,\n        },\n        SpSim,\n    ],\n}
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG ENSURE ZONE: Enabling switch zone (new). start_zone()
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:4690
+    request = SwitchZoneConfig {\n    id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n    addresses: [\n        ::1,\n    ],\n    services: [\n        Dendrite {\n            asic: SoftNpuPropolisDevice,\n        },\n        Lldpd {\n            baseboard: Pc {\n                identifier: "g3",\n                model: "i86pc",\n            },\n        },\n        ManagementGatewayService,\n        Uplink,\n        Wicketd {\n            baseboard: Pc {\n                identifier: "g3",\n                model: "i86pc",\n            },\n        },\n        Mgd,\n        MgDdm {\n            mode: "transit",\n        },\n        Tfport {\n            pkt_source: "vioif0",\n            asic: SoftNpuPropolisDevice,\n        },\n        SpSim,\n    ],\n}
+    sled zone state = disabled
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: If we've given the switch an underlay address,
+            we also need to inject SMF properties so that tfport uplinks can be created. If underlay_info is NONE,
+            then nothing will happen here
+    file = sled-agent/src/services.rs:4506
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: underlay_info is NONE
+    file = sled-agent/src/services.rs:4515
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:37.018Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:37.034Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap0",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap0",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:37.058Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:37.067Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap0",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 0,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 0,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:37.081Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap0",\n    "oxControlService0",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:37.089Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:37.110Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:38.670Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    A ZFS file system has been created for this zone.
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1435 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 35 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 3 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+    file = sled-agent/src/services.rs:5184
+04:25:39.672Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:39.678Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:39.714Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap1",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap1",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:39.812Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap1",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 1,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 1,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:39.860Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap1",\n    "oxControlService1",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:39.882Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Incomplete
+    file = illumos-utils/src/zone.rs:295
+04:25:39.882Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Incomplete
+04:25:42.059Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:42.060Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Incomplete
+    file = illumos-utils/src/zone.rs:269
+04:25:42.060Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:42.084Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:44.393Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 2229 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 31 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 2 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+    file = sled-agent/src/services.rs:5184
+04:25:45.394Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:45.394Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:45.411Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap2",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap2",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:45.451Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap2",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 2,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 2,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:45.471Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap2",\n    "oxControlService2",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:45.481Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Incomplete
+    file = illumos-utils/src/zone.rs:295
+04:25:45.484Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Incomplete
+04:25:47.061Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:47.503Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Incomplete
+    file = illumos-utils/src/zone.rs:269
+04:25:47.503Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:47.523Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:49.150Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1544 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 29 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 2 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+    file = sled-agent/src/services.rs:5184
+04:25:50.152Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:50.152Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:50.165Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap3",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap3",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:50.192Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap3",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 3,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 3,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:50.204Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap3",\n    "oxControlService3",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:50.212Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Incomplete
+    file = illumos-utils/src/zone.rs:295
+04:25:50.213Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Incomplete
+04:25:51.802Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Incomplete
+    file = illumos-utils/src/zone.rs:269
+04:25:51.803Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:51.855Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:52.073Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:56.273Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Omicron zone installed
+    brand specific options = [\n    "/opt/oxide/switch.tar.gz",\n    "/opt/oxide/overlay.tar.gz",\n]
+    file = illumos-utils/src/zone.rs:376
+    install zone output = "INFO: omicron: installing zone oxz_switch @ \\"/zone/oxz_switch\\"...\\nINFO: omicron: replicating /usr tree...\\nINFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1425 msec\\nINFO: omicron: replicating /lib tree...\\nINFO: omicron: replicated /lib: 254 files, 3267631, bytes, 31 msec\\nINFO: omicron: replicating /sbin tree...\\nINFO: omicron: replicated /sbin: 0 files, 0, bytes, 3 msec\\nINFO: omicron: pruning SMF manifests...\\nINFO: omicron: pruning global-only files...\\nINFO: omicron: unpacking baseline archive...\\nINFO: omicron: unpacking image \\"/opt/oxide/switch.tar.gz\\"...\\nINFO: omicron: unpacking image \\"/opt/oxide/overlay.tar.gz\\"...\\nINFO: omicron: copying /etc/default/init...\\nINFO: omicron: install complete, probably!"
+04:25:56.274Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Success
+    file = illumos-utils/src/running_zone.rs:1486
+    installed zone = InstalledZone {\n    log: Logger(zone, component),\n    zonepath: "/zone/oxz_switch",\n    name: "oxz_switch",\n    control_vnic: Link {\n        name: "oxControlService3",\n        deleted: false,\n        kind: OxideControlVnic,\n    },\n    bootstrap_vnic: Some(\n        Link {\n            name: "oxBootstrap3",\n            deleted: false,\n            kind: OxideBootstrapVnic,\n        },\n    ),\n    opte_ports: [],\n    links: [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n}
+04:25:56.274Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Installed zone.
+    file = sled-agent/src/services.rs:1610
+    installed zone = InstalledZone { log: Logger(zone, component), zonepath: "/zone/oxz_switch", name: "oxz_switch", control_vnic: Link { name: "oxControlService3", deleted: false, kind: OxideControlVnic }, bootstrap_vnic: Some(Link { name: "oxBootstrap3", deleted: false, kind: OxideBootstrapVnic }), opte_ports: [], links: [Link { name: "vioif0", deleted: false, kind: Physical }] }
+04:25:56.276Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Sled Agent not initialized yet
+    file = sled-agent/src/services.rs:5184
+04:25:57.074Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:57.277Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:57.278Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:57.291Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap4",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap4",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:57.316Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap4",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 4,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 4,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:57.328Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap4",\n    "oxControlService4",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:57.337Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Installed
+    file = illumos-utils/src/zone.rs:295
+04:25:57.337Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Installed
+04:25:58.581Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Installed
+    file = illumos-utils/src/zone.rs:269
+04:25:58.581Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:58.598Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:26:02.076Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:02.741Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Omicron zone installed
+    brand specific options = [\n    "/opt/oxide/switch.tar.gz",\n    "/opt/oxide/overlay.tar.gz",\n]
+    file = illumos-utils/src/zone.rs:376
+    install zone output = "INFO: omicron: installing zone oxz_switch @ \\"/zone/oxz_switch\\"...\\nINFO: omicron: replicating /usr tree...\\nINFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1645 msec\\nINFO: omicron: replicating /lib tree...\\nINFO: omicron: replicated /lib: 254 files, 3267631, bytes, 15 msec\\nINFO: omicron: replicating /sbin tree...\\nINFO: omicron: replicated /sbin: 0 files, 0, bytes, 1 msec\\nINFO: omicron: pruning SMF manifests...\\nINFO: omicron: pruning global-only files...\\nINFO: omicron: unpacking baseline archive...\\nINFO: omicron: unpacking image \\"/opt/oxide/switch.tar.gz\\"...\\nINFO: omicron: unpacking image \\"/opt/oxide/overlay.tar.gz\\"...\\nINFO: omicron: copying /etc/default/init...\\nINFO: omicron: install complete, probably!"
+04:26:02.743Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Success
+    file = illumos-utils/src/running_zone.rs:1486
+    installed zone = InstalledZone {\n    log: Logger(zone, component),\n    zonepath: "/zone/oxz_switch",\n    name: "oxz_switch",\n    control_vnic: Link {\n        name: "oxControlService4",\n        deleted: false,\n        kind: OxideControlVnic,\n    },\n    bootstrap_vnic: Some(\n        Link {\n            name: "oxBootstrap4",\n            deleted: false,\n            kind: OxideBootstrapVnic,\n        },\n    ),\n    opte_ports: [],\n    links: [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n}
+04:26:02.743Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Installed zone.
+    file = sled-agent/src/services.rs:1610
+    installed zone = InstalledZone { log: Logger(zone, component), zonepath: "/zone/oxz_switch", name: "oxz_switch", control_vnic: Link { name: "oxControlService4", deleted: false, kind: OxideControlVnic }, bootstrap_vnic: Some(Link { name: "oxBootstrap4", deleted: false, kind: OxideBootstrapVnic }), opte_ports: [], links: [Link { name: "vioif0", deleted: false, kind: Physical }] }
+04:26:02.743Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Sled Agent not initialized yet
+    file = sled-agent/src/services.rs:5184
+04:26:03.742Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:26:03.743Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:26:03.757Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap5",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap5",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:26:03.786Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap5",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 5,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 5,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:26:03.797Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap5",\n    "oxControlService5",\n    "vioif0",\n]
+    root path = "/zone"
+04:26:03.805Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Installed
+    file = illumos-utils/src/zone.rs:295
+04:26:03.805Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Installed
+04:26:05.213Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Installed
+    file = illumos-utils/src/zone.rs:269
+04:26:05.213Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:26:05.231Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:26:07.078Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:08.730Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Omicron zone installed
+    brand specific options = [\n    "/opt/oxide/switch.tar.gz",\n    "/opt/oxide/overlay.tar.gz",\n]
+    file = illumos-utils/src/zone.rs:376
+    install zone output = "INFO: omicron: installing zone oxz_switch @ \\"/zone/oxz_switch\\"...\\nINFO: omicron: replicating /usr tree...\\nINFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1133 msec\\nINFO: omicron: replicating /lib tree...\\nINFO: omicron: replicated /lib: 254 files, 3267631, bytes, 31 msec\\nINFO: omicron: replicating /sbin tree...\\nINFO: omicron: replicated /sbin: 0 files, 0, bytes, 2 msec\\nINFO: omicron: pruning SMF manifests...\\nINFO: omicron: pruning global-only files...\\nINFO: omicron: unpacking baseline archive...\\nINFO: omicron: unpacking image \\"/opt/oxide/switch.tar.gz\\"...\\nINFO: omicron: unpacking image \\"/opt/oxide/overlay.tar.gz\\"...\\nINFO: omicron: copying /etc/default/init...\\nINFO: omicron: install complete, probably!"
+04:26:08.731Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Success
+    file = illumos-utils/src/running_zone.rs:1486
+    installed zone = InstalledZone {\n    log: Logger(zone, component),\n    zonepath: "/zone/oxz_switch",\n    name: "oxz_switch",\n    control_vnic: Link {\n        name: "oxControlService5",\n        deleted: false,\n        kind: OxideControlVnic,\n    },\n    bootstrap_vnic: Some(\n        Link {\n            name: "oxBootstrap5",\n            deleted: false,\n            kind: OxideBootstrapVnic,\n        },\n    ),\n    opte_ports: [],\n    links: [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n}
+04:26:08.731Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Installed zone.
+    file = sled-agent/src/services.rs:1610
+    installed zone = InstalledZone { log: Logger(zone, component), zonepath: "/zone/oxz_switch", name: "oxz_switch", control_vnic: Link { name: "oxControlService5", deleted: false, kind: OxideControlVnic }, bootstrap_vnic: Some(Link { name: "oxBootstrap5", deleted: false, kind: OxideBootstrapVnic }), opte_ports: [], links: [Link { name: "vioif0", deleted: false, kind: Physical }] }
+04:26:08.732Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Sled Agent not initialized yet
+    file = sled-agent/src/services.rs:5184
+04:26:09.731Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:26:09.732Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:26:09.753Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap6",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap6",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:26:09.803Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap6",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 6,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 6,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:26:09.823Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap6",\n    "oxControlService6",\n    "vioif0",\n]
+    root path = "/zone"
+04:26:09.836Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Installed
+    file = illumos-utils/src/zone.rs:295
+04:26:09.836Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Installed
+04:26:11.020Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Installed
+    file = illumos-utils/src/zone.rs:269
+04:26:11.020Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:26:11.037Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:26:12.080Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:14.942Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Omicron zone installed
+    brand specific options = [\n    "/opt/oxide/switch.tar.gz",\n    "/opt/oxide/overlay.tar.gz",\n]
+    file = illumos-utils/src/zone.rs:376
+    install zone output = "INFO: omicron: installing zone oxz_switch @ \\"/zone/oxz_switch\\"...\\nINFO: omicron: replicating /usr tree...\\nINFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1240 msec\\nINFO: omicron: replicating /lib tree...\\nINFO: omicron: replicated /lib: 254 files, 3267631, bytes, 24 msec\\nINFO: omicron: replicating /sbin tree...\\nINFO: omicron: replicated /sbin: 0 files, 0, bytes, 3 msec\\nINFO: omicron: pruning SMF manifests...\\nINFO: omicron: pruning global-only files...\\nINFO: omicron: unpacking baseline archive...\\nINFO: omicron: unpacking image \\"/opt/oxide/switch.tar.gz\\"...\\nINFO: omicron: unpacking image \\"/opt/oxide/overlay.tar.gz\\"...\\nINFO: omicron: copying /etc/default/init...\\nINFO: omicron: install complete, probably!"
+04:26:14.944Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Success
+    file = illumos-utils/src/running_zone.rs:1486
+    installed zone = InstalledZone {\n    log: Logger(zone, component),\n    zonepath: "/zone/oxz_switch",\n    name: "oxz_switch",\n    control_vnic: Link {\n        name: "oxControlService6",\n        deleted: false,\n        kind: OxideControlVnic,\n    },\n    bootstrap_vnic: Some(\n        Link {\n            name: "oxBootstrap6",\n            deleted: false,\n            kind: OxideBootstrapVnic,\n        },\n    ),\n    opte_ports: [],\n    links: [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n}
+04:26:14.944Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Installed zone.
+    file = sled-agent/src/services.rs:1610
+    installed zone = InstalledZone { log: Logger(zone, component), zonepath: "/zone/oxz_switch", name: "oxz_switch", control_vnic: Link { name: "oxControlService6", deleted: false, kind: OxideControlVnic }, bootstrap_vnic: Some(Link { name: "oxBootstrap6", deleted: false, kind: OxideBootstrapVnic }), opte_ports: [], links: [Link { name: "vioif0", deleted: false, kind: Physical }] }
+04:26:14.944Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Sled Agent not initialized yet
+    file = sled-agent/src/services.rs:5184
+04:26:15.943Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:26:15.944Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g3",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:26:15.956Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap7",\n        fdb0:a840:2500:7::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap7",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: 07ba52fb-d8d7-4067-b5e3-984327ff9703,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g3",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:26:15.980Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap7",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 7,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbdc90,\n                                    tail_position: 7,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                31,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/e69a7136-857d-411c-9627-5656c7960dc6/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:26:15.990Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap7",\n    "oxControlService7",\n    "vioif0",\n]
+    root path = "/zone"
+04:26:15.996Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Installed
+    file = illumos-utils/src/zone.rs:295
+04:26:15.997Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Installed
+04:26:17.081Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:17.125Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Installed
+    file = illumos-utils/src/zone.rs:269
+... and on and on...

@@ -357,6 +357,7 @@ fn display_zone_init_errors(errors: &[(String, Box<Error>)]) -> String {
 }
 
 /// Configuration parameters which modify the [`ServiceManager`]'s behavior.
+#[derive(Debug)]
 pub struct Config {
     /// Identifies the sled being configured
     pub sled_id: Uuid,
@@ -635,22 +636,22 @@ type ZoneMap = BTreeMap<String, OmicronZone>;
 /// Manages miscellaneous Sled-local services.
 pub struct ServiceManagerInner {
     log: Logger,
-    global_zone_bootstrap_link_local_address: Ipv6Addr,
+    pub global_zone_bootstrap_link_local_address: Ipv6Addr,
     switch_zone: Mutex<SledLocalZone>,
-    sled_mode: SledMode,
+    pub sled_mode: SledMode,
     time_sync_config: TimeSyncConfig,
     time_synced: AtomicBool,
-    switch_zone_maghemite_links: Vec<PhysicalLink>,
-    sidecar_revision: SidecarRevision,
+    pub switch_zone_maghemite_links: Vec<PhysicalLink>,
+    pub sidecar_revision: SidecarRevision,
     // Zones representing running services
     zones: Mutex<ZoneMap>,
-    underlay_vnic_allocator: VnicAllocator<Etherstub>,
-    underlay_vnic: EtherstubVnic,
-    bootstrap_vnic_allocator: VnicAllocator<Etherstub>,
+    pub underlay_vnic_allocator: VnicAllocator<Etherstub>,
+    pub underlay_vnic: EtherstubVnic,
+    pub bootstrap_vnic_allocator: VnicAllocator<Etherstub>,
     ddmd_client: DdmAdminClient,
     advertised_prefixes: Mutex<HashSet<Ipv6Subnet<SLED_PREFIX>>>,
-    sled_info: OnceCell<SledAgentInfo>,
-    switch_zone_bootstrap_address: Ipv6Addr,
+    pub sled_info: OnceCell<SledAgentInfo>,
+    pub switch_zone_bootstrap_address: Ipv6Addr,
     storage: StorageHandle,
     zone_bundler: ZoneBundler,
     ledger_directory_override: OnceCell<Utf8PathBuf>,
@@ -659,7 +660,8 @@ pub struct ServiceManagerInner {
 
 // Late-binding information, only known once the sled agent is up and
 // operational.
-struct SledAgentInfo {
+#[derive(Debug)]
+pub struct SledAgentInfo {
     config: Config,
     port_manager: PortManager,
     resolver: Resolver,
@@ -680,7 +682,7 @@ pub(crate) enum TimeSyncConfig {
 
 #[derive(Clone)]
 pub struct ServiceManager {
-    inner: Arc<ServiceManagerInner>,
+    pub inner: Arc<ServiceManagerInner>,
 }
 
 impl ServiceManager {

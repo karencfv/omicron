@@ -1,0 +1,663 @@
+root@g0:~# cat $(svcs -L sled-agent) | grep DEBUG | looker
+04:25:32.881Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Checking current full hardware snapshot
+    disks = {}
+    file = sled-agent/src/hardware_monitor.rs:281
+    underlay_network_info = None
+04:25:32.887Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Scrimlet driver loaded, running HardwareMonitor::activate_switch()
+    file = sled-agent/src/hardware_monitor.rs:288
+04:25:32.887Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino not ready
+    file = sled-agent/src/hardware_monitor.rs:250
+04:25:33.844Z INFO SledAgent (ServiceManager): DEBUG SERVICE MANAGER: New service manager config
+    bootstrap_vnic_allocator = VnicAllocator {\n    value: 0,\n    scope: "Bootstrap",\n    data_link: Etherstub(\n        "bootstrap_stub0",\n    ),\n    destructor: Destructor {\n        inner: Mutex {\n            data: Inner {\n                tx: UnboundedSender {\n                    chan: Tx {\n                        inner: Chan {\n                            tx: Tx {\n                                block_tail: 0x0000000003a048d0,\n                                tail_position: 0,\n                            },\n                            semaphore: Semaphore(\n                                0,\n                            ),\n                            rx_waker: AtomicWaker,\n                            tx_count: 1,\n                            rx_fields: "...",\n                        },\n                    },\n                },\n                handle: Some(\n                    JoinHandle {\n                        id: Id(\n                            26,\n                        ),\n                    },\n                ),\n            },\n            poisoned: false,\n            ..\n        },\n    },\n}
+    ddmd_client = Client {\n    inner: Client {\n        baseurl: "http://[::1]:8000",\n        client: Client {\n            accepts: Accepts,\n            proxies: [\n                Proxy(\n                    System(\n                        {},\n                    ),\n                    None,\n                ),\n            ],\n            referer: true,\n            default_headers: {\n                "accept": "*/*",\n            },\n            timeout: 60s,\n        },\n        inner: Logger(DdmAdminClient, component),\n    },\n    log: Logger(DdmAdminClient, component),\n}
+    file = sled-agent/src/services.rs:715
+    global_zone_bootstrap_link_local_address = fe80::8:20ff:fe27:c07b
+    switch_zone = Mutex::new(SledLocalZone::Disabled)
+    switch_zone_bootstrap_address = fdb0:a840:2500:1::2
+    switch_zone_maghemite_links = [\n    PhysicalLink(\n        "tfportrear0_0",\n    ),\n    PhysicalLink(\n        "tfportrear1_0",\n    ),\n    PhysicalLink(\n        "tfportrear2_0",\n    ),\n    PhysicalLink(\n        "tfportrear3_0",\n    ),\n]
+    underlay_vnic = EtherstubVnic(\n    "underlay0",\n)
+    underlay_vnic_allocator = VnicAllocator {\n    value: 0,\n    scope: "Service",\n    data_link: Etherstub(\n        "underlay_stub0",\n    ),\n    destructor: Destructor {\n        inner: Mutex {\n            data: Inner {\n                tx: UnboundedSender {\n                    chan: Tx {\n                        inner: Chan {\n                            tx: Tx {\n                                block_tail: 0x0000000003c92050,\n                                tail_position: 0,\n                            },\n                            semaphore: Semaphore(\n                                0,\n                            ),\n                            rx_waker: AtomicWaker,\n                            tx_count: 1,\n                            rx_fields: "...",\n                        },\n                    },\n                },\n                handle: Some(\n                    JoinHandle {\n                        id: Id(\n                            27,\n                        ),\n                    },\n                ),\n            },\n            poisoned: false,\n            ..\n        },\n    },\n}
+    zones = Mutex::new(BTreeMap::new())
+04:25:33.844Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino is loaded, running HardwareMonitor::activate_switch()
+    file = sled-agent/src/hardware_monitor.rs:148
+04:25:33.844Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino is ready, activating switch
+    baseboard = Pc {\n    identifier: "g0",\n    model: "i86pc",\n}
+    file = sled-agent/src/hardware_monitor.rs:229
+    underlay_info = None
+04:25:33.844Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Ensuring scrimlet services (enabling services). 
+            If we're reconfiguring the switch zone with an underlay address, we also need the rack network
+            config to set tfport uplinks.
+    baseboard = Pc {\n    identifier: "g0",\n    model: "i86pc",\n}
+    file = sled-agent/src/services.rs:4399
+    underlay_info = None
+04:25:33.845Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Will ensure zone with new addresses and services
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:4492
+    filesystems = ty: lofs, dir: /opt/softnpu/stuff, special: /var/run/softnpu/sidecar
+    request = SwitchZoneConfig {\n    id: fd845158-2d57-408c-aa90-773fa6a22bb3,\n    addresses: [\n        ::1,\n    ],\n    services: [\n        Dendrite {\n            asic: SoftNpuPropolisDevice,\n        },\n        Lldpd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        ManagementGatewayService,\n        Uplink,\n        Wicketd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        Mgd,\n        MgDdm {\n            mode: "transit",\n        },\n        Tfport {\n            pkt_source: "vioif0",\n            asic: SoftNpuPropolisDevice,\n        },\n        SpSim,\n    ],\n}
+04:25:33.845Z INFO SledAgent (ServiceManager): DEBUG ENSURE ZONE: Enabling switch zone (new). start_zone()
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:4690
+    request = SwitchZoneConfig {\n    id: fd845158-2d57-408c-aa90-773fa6a22bb3,\n    addresses: [\n        ::1,\n    ],\n    services: [\n        Dendrite {\n            asic: SoftNpuPropolisDevice,\n        },\n        Lldpd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        ManagementGatewayService,\n        Uplink,\n        Wicketd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        Mgd,\n        MgDdm {\n            mode: "transit",\n        },\n        Tfport {\n            pkt_source: "vioif0",\n            asic: SoftNpuPropolisDevice,\n        },\n        SpSim,\n    ],\n}
+    sled zone state = disabled
+04:25:33.845Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: If we've given the switch an underlay address,
+            we also need to inject SMF properties so that tfport uplinks can be created. If underlay_info is NONE,
+            then nothing will happen here
+    file = sled-agent/src/services.rs:4506
+04:25:33.845Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: underlay_info is NONE
+    file = sled-agent/src/services.rs:4515
+04:25:33.845Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:33.845Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: fd845158-2d57-408c-aa90-773fa6a22bb3,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: fd845158-2d57-408c-aa90-773fa6a22bb3,\n            addresses: [\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:33.867Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap0",\n        fdb0:a840:2500:1::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap0",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: fd845158-2d57-408c-aa90-773fa6a22bb3,\n        addresses: [\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:33.916Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap0",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 0,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbfc90,\n                                    tail_position: 0,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                28,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/761a3086-e22a-49eb-963c-dc38967612a7/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:33.928Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:33.933Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap0",\n    "oxControlService0",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:33.942Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:33.963Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:36.442Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Checking current full hardware snapshot
+    disks = {}
+    file = sled-agent/src/hardware_monitor.rs:281
+    underlay_network_info = Some(\n    (\n        fd00:1122:3344:101::2,\n        Some(\n            RackNetworkConfigV1 {\n                rack_subnet: Ipv6Network {\n                    addr: fd00:1122:3344:100::,\n                    prefix: 56,\n                },\n                infra_ip_first: 198.51.101.1,\n                infra_ip_last: 198.51.101.15,\n                ports: [\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.2,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch0,\n                        port: "qsfp0",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 47,\n                                port: "qsfp0",\n                                addr: 198.51.101.1,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.10,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch0,\n                        port: "qsfp1",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 47,\n                                port: "qsfp1",\n                                addr: 198.51.101.9,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.6,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch1,\n                        port: "qsfp0",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 48,\n                                port: "qsfp0",\n                                addr: 198.51.101.5,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.14,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch1,\n                        port: "qsfp1",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 48,\n                                port: "qsfp1",\n                                addr: 198.51.101.13,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                ],\n                bgp: [\n                    BgpConfig {\n                        asn: 47,\n                        originate: [\n                            Ipv4Network {\n                                addr: 198.51.100.0,\n                                prefix: 24,\n                            },\n                        ],\n                    },\n                    BgpConfig {\n                        asn: 48,\n                        originate: [\n                            Ipv4Network {\n                                addr: 198.51.100.0,\n                                prefix: 24,\n                            },\n                        ],\n                    },\n                ],\n                bfd: [],\n            },\n        ),\n    ),\n)
+04:25:36.442Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Scrimlet driver loaded, running HardwareMonitor::activate_switch()
+    file = sled-agent/src/hardware_monitor.rs:288
+04:25:36.442Z INFO SledAgent (HardwareMonitor): DEBUG HARDWARE: Tofino is ready, activating switch
+    baseboard = Pc {\n    identifier: "g0",\n    model: "i86pc",\n}
+    file = sled-agent/src/hardware_monitor.rs:229
+    underlay_info = Some(\n    (\n        fd00:1122:3344:101::2,\n        Some(\n            RackNetworkConfigV1 {\n                rack_subnet: Ipv6Network {\n                    addr: fd00:1122:3344:100::,\n                    prefix: 56,\n                },\n                infra_ip_first: 198.51.101.1,\n                infra_ip_last: 198.51.101.15,\n                ports: [\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.2,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch0,\n                        port: "qsfp0",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 47,\n                                port: "qsfp0",\n                                addr: 198.51.101.1,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.10,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch0,\n                        port: "qsfp1",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 47,\n                                port: "qsfp1",\n                                addr: 198.51.101.9,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.6,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch1,\n                        port: "qsfp0",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 48,\n                                port: "qsfp0",\n                                addr: 198.51.101.5,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.14,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch1,\n                        port: "qsfp1",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 48,\n                                port: "qsfp1",\n                                addr: 198.51.101.13,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                ],\n                bgp: [\n                    BgpConfig {\n                        asn: 47,\n                        originate: [\n                            Ipv4Network {\n                                addr: 198.51.100.0,\n                                prefix: 24,\n                            },\n                        ],\n                    },\n                    BgpConfig {\n                        asn: 48,\n                        originate: [\n                            Ipv4Network {\n                                addr: 198.51.100.0,\n                                prefix: 24,\n                            },\n                        ],\n                    },\n                ],\n                bfd: [],\n            },\n        ),\n    ),\n)
+04:25:36.442Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Ensuring scrimlet services (enabling services). 
+            If we're reconfiguring the switch zone with an underlay address, we also need the rack network
+            config to set tfport uplinks.
+    baseboard = Pc {\n    identifier: "g0",\n    model: "i86pc",\n}
+    file = sled-agent/src/services.rs:4399
+    underlay_info = Some(\n    (\n        fd00:1122:3344:101::2,\n        Some(\n            RackNetworkConfigV1 {\n                rack_subnet: Ipv6Network {\n                    addr: fd00:1122:3344:100::,\n                    prefix: 56,\n                },\n                infra_ip_first: 198.51.101.1,\n                infra_ip_last: 198.51.101.15,\n                ports: [\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.2,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch0,\n                        port: "qsfp0",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 47,\n                                port: "qsfp0",\n                                addr: 198.51.101.1,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.10,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch0,\n                        port: "qsfp1",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 47,\n                                port: "qsfp1",\n                                addr: 198.51.101.9,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.6,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch1,\n                        port: "qsfp0",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 48,\n                                port: "qsfp0",\n                                addr: 198.51.101.5,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                    PortConfigV1 {\n                        routes: [],\n                        addresses: [\n                            V4(\n                                Ipv4Network {\n                                    addr: 198.51.101.14,\n                                    prefix: 30,\n                                },\n                            ),\n                        ],\n                        switch: Switch1,\n                        port: "qsfp1",\n                        uplink_port_speed: Speed100G,\n                        uplink_port_fec: None,\n                        bgp_peers: [\n                            BgpPeerConfig {\n                                asn: 48,\n                                port: "qsfp1",\n                                addr: 198.51.101.13,\n                                hold_time: None,\n                                idle_hold_time: None,\n                                delay_open: None,\n                                connect_retry: None,\n                                keepalive: None,\n                            },\n                        ],\n                        autoneg: false,\n                    },\n                ],\n                bgp: [\n                    BgpConfig {\n                        asn: 47,\n                        originate: [\n                            Ipv4Network {\n                                addr: 198.51.100.0,\n                                prefix: 24,\n                            },\n                        ],\n                    },\n                    BgpConfig {\n                        asn: 48,\n                        originate: [\n                            Ipv4Network {\n                                addr: 198.51.100.0,\n                                prefix: 24,\n                            },\n                        ],\n                    },\n                ],\n                bfd: [],\n            },\n        ),\n    ),\n)
+04:25:36.442Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Will ensure zone with new addresses and services
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:4492
+    filesystems = ty: lofs, dir: /opt/softnpu/stuff, special: /var/run/softnpu/sidecar
+    request = SwitchZoneConfig {\n    id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n    addresses: [\n        fd00:1122:3344:101::2,\n        ::1,\n    ],\n    services: [\n        Dendrite {\n            asic: SoftNpuPropolisDevice,\n        },\n        Lldpd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        ManagementGatewayService,\n        Uplink,\n        Wicketd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        Mgd,\n        MgDdm {\n            mode: "transit",\n        },\n        Tfport {\n            pkt_source: "vioif0",\n            asic: SoftNpuPropolisDevice,\n        },\n        SpSim,\n    ],\n}
+04:25:36.442Z INFO SledAgent (BootstrapAgentRssHandler): DEBUG INITIALIZE SLED AGENT: Peer agent initialized
+    file = sled-agent/src/bootstrap/rss_handle.rs:109
+    peer = [fdb0:a840:2500:1::1]:12346
+04:25:37.010Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    A ZFS file system has been created for this zone.
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 2928 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 22 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 2 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+    file = sled-agent/src/services.rs:5184
+04:25:37.013Z INFO SledAgent (ServiceManager): DEBUG ENSURE ZONE: Enabling switch zone (already underway)
+    file = sled-agent/src/services.rs:4703
+04:25:37.013Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: If we've given the switch an underlay address,
+            we also need to inject SMF properties so that tfport uplinks can be created. If underlay_info is NONE,
+            then nothing will happen here
+    file = sled-agent/src/services.rs:4506
+04:25:37.016Z INFO SledAgent (ServiceManager): DEBUG ACTIVATE SWITCH: Ensuring switch zone uplinks are configured
+    file = sled-agent/src/services.rs:4510
+    ip = fd00:1122:3344:101::2
+    rack_network_config = RackNetworkConfigV1 {\n    rack_subnet: Ipv6Network {\n        addr: fd00:1122:3344:100::,\n        prefix: 56,\n    },\n    infra_ip_first: 198.51.101.1,\n    infra_ip_last: 198.51.101.15,\n    ports: [\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.2,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch0,\n            port: "qsfp0",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 47,\n                    port: "qsfp0",\n                    addr: 198.51.101.1,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.10,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch0,\n            port: "qsfp1",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 47,\n                    port: "qsfp1",\n                    addr: 198.51.101.9,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.6,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch1,\n            port: "qsfp0",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 48,\n                    port: "qsfp0",\n                    addr: 198.51.101.5,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.14,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch1,\n            port: "qsfp1",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 48,\n                    port: "qsfp1",\n                    addr: 198.51.101.13,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n    ],\n    bgp: [\n        BgpConfig {\n            asn: 47,\n            originate: [\n                Ipv4Network {\n                    addr: 198.51.100.0,\n                    prefix: 24,\n                },\n            ],\n        },\n        BgpConfig {\n            asn: 48,\n            originate: [\n                Ipv4Network {\n                    addr: 198.51.100.0,\n                    prefix: 24,\n                },\n            ],\n        },\n    ],\n    bfd: [],\n}
+04:25:37.017Z INFO SledAgent (ServiceManager): DEBUG ENSURE SWITCH ZONE UPLINKS CONFIGURED: Initialize switch configuration. Running init_switch_config. This is now where early networking is run. This method is intended to be called by a scrimlet to configure _its own_ switch by talking to dendrite on its own switch zone's underlay address.
+    file = sled-agent/src/services.rs:4535
+    rack network config = RackNetworkConfigV1 {\n    rack_subnet: Ipv6Network {\n        addr: fd00:1122:3344:100::,\n        prefix: 56,\n    },\n    infra_ip_first: 198.51.101.1,\n    infra_ip_last: 198.51.101.15,\n    ports: [\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.2,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch0,\n            port: "qsfp0",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 47,\n                    port: "qsfp0",\n                    addr: 198.51.101.1,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.10,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch0,\n            port: "qsfp1",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 47,\n                    port: "qsfp1",\n                    addr: 198.51.101.9,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.6,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch1,\n            port: "qsfp0",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 48,\n                    port: "qsfp0",\n                    addr: 198.51.101.5,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n        PortConfigV1 {\n            routes: [],\n            addresses: [\n                V4(\n                    Ipv4Network {\n                        addr: 198.51.101.14,\n                        prefix: 30,\n                    },\n                ),\n            ],\n            switch: Switch1,\n            port: "qsfp1",\n            uplink_port_speed: Speed100G,\n            uplink_port_fec: None,\n            bgp_peers: [\n                BgpPeerConfig {\n                    asn: 48,\n                    port: "qsfp1",\n                    addr: 198.51.101.13,\n                    hold_time: None,\n                    idle_hold_time: None,\n                    delay_open: None,\n                    connect_retry: None,\n                    keepalive: None,\n                },\n            ],\n            autoneg: false,\n        },\n    ],\n    bgp: [\n        BgpConfig {\n            asn: 47,\n            originate: [\n                Ipv4Network {\n                    addr: 198.51.100.0,\n                    prefix: 24,\n                },\n            ],\n        },\n        BgpConfig {\n            asn: 48,\n            originate: [\n                Ipv4Network {\n                    addr: 198.51.100.0,\n                    prefix: 24,\n                },\n            ],\n        },\n    ],\n    bfd: [],\n}
+    switch zone underlay IP = fd00:1122:3344:101::2
+04:25:37.017Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Determining physical location of our switch zone at fd00:1122:3344:101::2
+    file = sled-agent/src/bootstrap/early_networking.rs:364
+04:25:37.092Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Created MGS client: 
+                 Client {
+        baseurl: "http://[fd00:1122:3344:101::2]:12225",
+        client: Client {
+            accepts: Accepts,
+            proxies: [
+                Proxy(
+                    System(
+                        {},
+                    ),
+                    None,
+                ),
+            ],
+            referer: true,
+            default_headers: {
+                "accept": "*/*",
+            },
+            timeout: 15s,
+        },
+        inner: Logger(component, component),
+    }
+    file = sled-agent/src/bootstrap/early_networking.rs:373
+04:25:37.092Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Looping indefinitely until GET /local/switch-id returns. MGS API description: Get the identifier for the switch this MGS instance is connected to. Note that most MGS endpoints behave identically regardless of which scrimlet the MGS instance is running on; this one, however, is intentionally different. This endpoint is probably only useful for clients communicating with MGS over localhost (i.e., other services in the switch zone) who need to know which sidecar they are connected to.
+    file = sled-agent/src/bootstrap/early_networking.rs:380
+04:25:38.014Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:38.015Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n            addresses: [\n                fd00:1122:3344:101::2,\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n            addresses: [\n                fd00:1122:3344:101::2,\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:38.094Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap1",\n        fdb0:a840:2500:1::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap1",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n        addresses: [\n            fd00:1122:3344:101::2,\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:38.207Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap1",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 1,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbfc90,\n                                    tail_position: 1,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                28,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/761a3086-e22a-49eb-963c-dc38967612a7/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:38.228Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap1",\n    "oxControlService1",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:38.241Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Incomplete
+    file = illumos-utils/src/zone.rs:295
+04:25:38.241Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Incomplete
+04:25:38.930Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:40.310Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Incomplete
+    file = illumos-utils/src/zone.rs:269
+04:25:40.310Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:40.338Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:42.104Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1667 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 36 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 3 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+    file = sled-agent/src/services.rs:5184
+04:25:43.106Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:43.106Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n            addresses: [\n                fd00:1122:3344:101::2,\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n            addresses: [\n                fd00:1122:3344:101::2,\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:43.217Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap2",\n        fdb0:a840:2500:1::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap2",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n        addresses: [\n            fd00:1122:3344:101::2,\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:43.628Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap2",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 2,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbfc90,\n                                    tail_position: 2,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                28,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/761a3086-e22a-49eb-963c-dc38967612a7/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:43.786Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap2",\n    "oxControlService2",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:43.838Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Incomplete
+    file = illumos-utils/src/zone.rs:295
+04:25:43.838Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Incomplete
+04:25:43.979Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:45.663Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Incomplete
+    file = illumos-utils/src/zone.rs:269
+04:25:45.663Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:45.693Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:47.636Z WARN SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Failed to initialize switch zone: Failed to install zone 'oxz_switch' from '/opt/oxide/switch.tar.gz': Failed to execute zoneadm command 'Install' for zone 'oxz_switch': Failed to parse command output: exit code 1
+    stdout:
+    INFO: omicron: installing zone oxz_switch @ "/zone/oxz_switch"...
+    INFO: omicron: replicating /usr tree...
+    INFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1846 msec
+    INFO: omicron: replicating /lib tree...
+    INFO: omicron: replicated /lib: 254 files, 3267631, bytes, 22 msec
+    INFO: omicron: replicating /sbin tree...
+    INFO: omicron: replicated /sbin: 0 files, 0, bytes, 3 msec
+    INFO: omicron: pruning SMF manifests...
+    INFO: omicron: pruning global-only files...
+    stderr:
+    Error: could not locate "gzonly.txt" in any baseline directory
+    file = sled-agent/src/services.rs:5184
+04:25:48.637Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: Looping until initialized, calling try_initialize_sled_local_zone
+    file = sled-agent/src/services.rs:5180
+04:25:48.637Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: calling initialize_zone
+    data links = [\n    "vioif0",\n]
+    file = sled-agent/src/services.rs:5159
+    request = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n            addresses: [\n                fd00:1122:3344:101::2,\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+    zone args = Switch(\n    SwitchZoneConfigLocal {\n        zone: SwitchZoneConfig {\n            id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n            addresses: [\n                fd00:1122:3344:101::2,\n                ::1,\n            ],\n            services: [\n                Dendrite {\n                    asic: SoftNpuPropolisDevice,\n                },\n                Lldpd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                ManagementGatewayService,\n                Uplink,\n                Wicketd {\n                    baseboard: Pc {\n                        identifier: "g0",\n                        model: "i86pc",\n                    },\n                },\n                Mgd,\n                MgDdm {\n                    mode: "transit",\n                },\n                Tfport {\n                    pkt_source: "vioif0",\n                    asic: SoftNpuPropolisDevice,\n                },\n                SpSim,\n            ],\n        },\n        root: "/zone",\n    },\n)
+04:25:48.726Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Calling initialize_zone() for SWITCH zone.
+    bootstrap name and address = Some(\n    (\n        "oxBootstrap3",\n        fdb0:a840:2500:1::2,\n    ),\n)
+    bootstrap_vnic = Some(\n    Link {\n        name: "oxBootstrap3",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    config = SwitchZoneConfigLocal {\n    zone: SwitchZoneConfig {\n        id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n        addresses: [\n            fd00:1122:3344:101::2,\n            ::1,\n        ],\n        services: [\n            Dendrite {\n                asic: SoftNpuPropolisDevice,\n            },\n            Lldpd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            ManagementGatewayService,\n            Uplink,\n            Wicketd {\n                baseboard: Pc {\n                    identifier: "g0",\n                    model: "i86pc",\n                },\n            },\n            Mgd,\n            MgDdm {\n                mode: "transit",\n            },\n            Tfport {\n                pkt_source: "vioif0",\n                asic: SoftNpuPropolisDevice,\n            },\n            SpSim,\n        ],\n    },\n    root: "/zone",\n}
+    file = sled-agent/src/services.rs:1512
+04:25:48.835Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Install zone.
+    OPTE ports = Some(\n    [],\n)
+    bootstrap vnic = Some(\n    Link {\n        name: "oxBootstrap3",\n        deleted: false,\n        kind: OxideBootstrapVnic,\n    },\n)
+    data links = Some(\n    [\n        "vioif0",\n    ],\n)
+    file = sled-agent/src/services.rs:1601
+    limit priv = Some(\n    [\n        "default",\n        "dtrace_user",\n        "dtrace_proc",\n        "sys_dl_config",\n    ],\n)
+    links = Some(\n    [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n)
+    underlay_vnic_allocator = Some(\n    VnicAllocator {\n        value: 3,\n        scope: "Service",\n        data_link: Etherstub(\n            "underlay_stub0",\n        ),\n        destructor: Destructor {\n            inner: Mutex {\n                data: Inner {\n                    tx: UnboundedSender {\n                        chan: Tx {\n                            inner: Chan {\n                                tx: Tx {\n                                    block_tail: 0x0000000003cbfc90,\n                                    tail_position: 3,\n                                },\n                                semaphore: Semaphore(\n                                    0,\n                                ),\n                                rx_waker: AtomicWaker,\n                                tx_count: 1,\n                                rx_fields: "...",\n                            },\n                        },\n                    },\n                    handle: Some(\n                        JoinHandle {\n                            id: Id(\n                                28,\n                            ),\n                        },\n                    ),\n                },\n                poisoned: false,\n                ..\n            },\n        },\n    },\n)
+    unique name = None
+    zone image paths = Some(\n    [\n        "/opt/oxide",\n        "/pool/int/761a3086-e22a-49eb-963c-dc38967612a7/install",\n    ],\n)
+    zone root path = Some(\n    "/zone",\n)
+    zone type = Some(\n    "switch",\n)
+04:25:48.910Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Installing zone with the following configuration
+    file = illumos-utils/src/running_zone.rs:1454
+    full zone name = "oxz_switch"
+    image path = "/opt/oxide/switch.tar.gz"
+    limit_priv = [\n    "default",\n    "dtrace_user",\n    "dtrace_proc",\n    "sys_dl_config",\n]
+    net device names = [\n    "oxBootstrap3",\n    "oxControlService3",\n    "vioif0",\n]
+    root path = "/zone"
+04:25:48.933Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: install_omicron_zone: Found zone: oxz_switch in state Incomplete
+    file = illumos-utils/src/zone.rs:295
+04:25:48.934Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Invalid state; uninstalling and deleting zone oxz_switch
+    file = illumos-utils/src/zone.rs:306
+    state = Incomplete
+04:25:48.995Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:50.860Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: halt_and_remove_logged: Previous zone state: Incomplete
+    file = illumos-utils/src/zone.rs:269
+04:25:50.860Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Configuring new Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:315
+04:25:50.879Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Installing Omicron zone: oxz_switch
+    file = illumos-utils/src/zone.rs:358
+04:25:52.092Z WARN SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Failed to get switch ID from MGS (retrying in 73.38234ms)
+    error = Communication Error: error sending request for url (http://[fd00:1122:3344:101::2]:12225/local/switch-id): operation timed out
+    file = sled-agent/src/bootstrap/early_networking.rs:397
+04:25:53.997Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:25:55.969Z INFO SledAgent (ServiceManager): DEBUG INSTALL OMICRON ZONE: Omicron zone installed
+    brand specific options = [\n    "/opt/oxide/switch.tar.gz",\n    "/opt/oxide/overlay.tar.gz",\n]
+    file = illumos-utils/src/zone.rs:376
+    install zone output = "INFO: omicron: installing zone oxz_switch @ \\"/zone/oxz_switch\\"...\\nINFO: omicron: replicating /usr tree...\\nINFO: omicron: replicated /usr: 23227 files, 375826404, bytes, 1641 msec\\nINFO: omicron: replicating /lib tree...\\nINFO: omicron: replicated /lib: 254 files, 3267631, bytes, 37 msec\\nINFO: omicron: replicating /sbin tree...\\nINFO: omicron: replicated /sbin: 0 files, 0, bytes, 4 msec\\nINFO: omicron: pruning SMF manifests...\\nINFO: omicron: pruning global-only files...\\nINFO: omicron: unpacking baseline archive...\\nINFO: omicron: unpacking image \\"/opt/oxide/switch.tar.gz\\"...\\nINFO: omicron: unpacking image \\"/opt/oxide/overlay.tar.gz\\"...\\nINFO: omicron: copying /etc/default/init...\\nINFO: omicron: install complete, probably!"
+04:25:55.970Z INFO SledAgent (ServiceManager): DEBUG INSTALL: Success
+    file = illumos-utils/src/running_zone.rs:1486
+    installed zone = InstalledZone {\n    log: Logger(zone, component),\n    zonepath: "/zone/oxz_switch",\n    name: "oxz_switch",\n    control_vnic: Link {\n        name: "oxControlService3",\n        deleted: false,\n        kind: OxideControlVnic,\n    },\n    bootstrap_vnic: Some(\n        Link {\n            name: "oxBootstrap3",\n            deleted: false,\n            kind: OxideBootstrapVnic,\n        },\n    ),\n    opte_ports: [],\n    links: [\n        Link {\n            name: "vioif0",\n            deleted: false,\n            kind: Physical,\n        },\n    ],\n}
+04:25:55.970Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Installed zone.
+    file = sled-agent/src/services.rs:1610
+    installed zone = InstalledZone { log: Logger(zone, component), zonepath: "/zone/oxz_switch", name: "oxz_switch", control_vnic: Link { name: "oxControlService3", deleted: false, kind: OxideControlVnic }, bootstrap_vnic: Some(Link { name: "oxBootstrap3", deleted: false, kind: OxideBootstrapVnic }), opte_ports: [], links: [Link { name: "vioif0", deleted: false, kind: Physical }] }
+04:25:55.970Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Checking if links need link local
+    file = sled-agent/src/services.rs:2425
+04:25:55.972Z INFO SledAgent (ServiceManager): DEBUG PROFILE BUILDER: Profile for oxz_switch:
+    <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+    <service_bundle type="profile" name="omicron">
+      <service version="1" type="service" name="oxide/zone-network-setup">
+          <property_group type="application" name="config">
+            <propval type="astring" name="datalink" value='oxControlService3'/>
+            <propval type="astring" name="gateway" value='fd00:1122:3344:101::1'/>
+            <property type="astring" name="static_addr">
+              <astring_list>
+                <value_node value="fd00:1122:3344:101::2" />
+                <value_node value="::1" />
+              </astring_list>
+            </property>
+          </property_group>
+        <instance enabled="true" name="default">
+        </instance>
+      </service>
+      <service version="1" type="service" name="network/dns/client">
+        <instance enabled="false" name="default">
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/mgs">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <property type="astring" name="address">
+              <astring_list>
+                <value_node value="[::1]:12225" />
+                <value_node value="[fd00:1122:3344:101::2]:12225" />
+              </astring_list>
+            </property>
+            <propval type="astring" name="id" value='dc45c01c-489d-4e54-a207-b90456d82ccf'/>
+            <propval type="astring" name="rack_id" value='fd455ba0-0599-4ffe-9094-d73646efaac0'/>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/wicketd">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="address" value='[::1]:12226'/>
+            <propval type="astring" name="artifact-address" value='[fdb0:a840:2500:1::2]:12227'/>
+            <propval type="astring" name="baseboard-file" value='/opt/oxide/baseboard.json'/>
+            <propval type="astring" name="mgs-address" value='[::1]:12225'/>
+            <propval type="astring" name="nexus-proxy-address" value='[::]:12229'/>
+            <propval type="astring" name="rack-subnet" value='fd00:1122:3344::'/>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/switch_zone_setup">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="zone_name" value='oxz_switch'/>
+            <propval type="astring" name="bootstrap_addr" value='fdb0:a840:2500:1::2'/>
+            <propval type="astring" name="bootstrap_name" value='oxBootstrap3'/>
+            <propval type="astring" name="bootstrap_vnic" value='oxBootstrap3'/>
+            <propval type="astring" name="gz_local_link_addr" value='fe80::8:20ff:fe27:c07b'/>
+            <propval type="astring" name="baseboard_info" value='{"type":"pc","identifier":"g0","model":"i86pc"}'/>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/dendrite">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="sled_id" value='2e09e348-8a9b-4d1b-9667-d3a57d4deed9'/>
+            <propval type="astring" name="rack_id" value='fd455ba0-0599-4ffe-9094-d73646efaac0'/>
+            <property type="astring" name="address">
+              <astring_list>
+                <value_node value="[fd00:1122:3344:101::2]:12224" />
+                <value_node value="[::1]:12224" />
+              </astring_list>
+            </property>
+            <property type="astring" name="dns_server">
+              <astring_list>
+                <value_node value="[fd00:1122:3344:1::1]:53" />
+                <value_node value="[fd00:1122:3344:2::1]:53" />
+                <value_node value="[fd00:1122:3344:3::1]:53" />
+                <value_node value="[fd00:1122:3344:4::1]:53" />
+                <value_node value="[fd00:1122:3344:5::1]:53" />
+              </astring_list>
+            </property>
+            <propval type="astring" name="front_ports" value='2'/>
+            <propval type="astring" name="rear_ports" value='4'/>
+            <propval type="astring" name="port_config" value='/opt/oxide/dendrite/misc/softnpu_single_sled_config.toml'/>
+            <propval type="astring" name="mgmt" value='uart'/>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/tfport">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="host" value='[::1]'/>
+            <propval type="astring" name="port" value='12224'/>
+            <propval type="astring" name="pkt_source" value='vioif0'/>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/lldpd">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="board_rev" value='softnpu_front_2_rear_4'/>
+            <propval type="astring" name="scrimlet_id" value='g0'/>
+            <propval type="astring" name="scrimlet_model" value='i86pc'/>
+            <property type="astring" name="address">
+              <astring_list>
+                <value_node value="[fd00:1122:3344:101::2]:12230" />
+                <value_node value="[::1]:12230" />
+              </astring_list>
+            </property>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/pumpkind">
+      </service>
+      <service version="1" type="service" name="oxide/mgd">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="sled_uuid" value='2e09e348-8a9b-4d1b-9667-d3a57d4deed9'/>
+            <propval type="astring" name="rack_uuid" value='fd455ba0-0599-4ffe-9094-d73646efaac0'/>
+            <property type="astring" name="dns_servers">
+              <astring_list>
+                <value_node value="[fd00:1122:3344:1::1]:53" />
+                <value_node value="[fd00:1122:3344:2::1]:53" />
+                <value_node value="[fd00:1122:3344:3::1]:53" />
+                <value_node value="[fd00:1122:3344:4::1]:53" />
+                <value_node value="[fd00:1122:3344:5::1]:53" />
+              </astring_list>
+            </property>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/mg-ddm">
+        <instance enabled="true" name="default">
+          <property_group type="application" name="config">
+            <propval type="astring" name="mode" value='transit'/>
+            <propval type="astring" name="dendrite" value='true'/>
+            <propval type="astring" name="sled_uuid" value='2e09e348-8a9b-4d1b-9667-d3a57d4deed9'/>
+            <propval type="astring" name="rack_uuid" value='fd455ba0-0599-4ffe-9094-d73646efaac0'/>
+            <property type="astring" name="dns_servers">
+              <astring_list>
+                <value_node value="[fd00:1122:3344:1::1]:53" />
+                <value_node value="[fd00:1122:3344:2::1]:53" />
+                <value_node value="[fd00:1122:3344:3::1]:53" />
+                <value_node value="[fd00:1122:3344:4::1]:53" />
+                <value_node value="[fd00:1122:3344:5::1]:53" />
+              </astring_list>
+            </property>
+            <property type="astring" name="interfaces">
+              <astring_list>
+                <value_node value="tfportrear0_0/ll" />
+                <value_node value="tfportrear1_0/ll" />
+                <value_node value="tfportrear2_0/ll" />
+                <value_node value="tfportrear3_0/ll" />
+              </astring_list>
+            </property>
+          </property_group>
+        </instance>
+      </service>
+      <service version="1" type="service" name="oxide/uplink">
+        <instance enabled="true" name="default">
+        </instance>
+      </service>
+    </service_bundle>
+    file = sled-agent/src/profile.rs:34
+04:25:58.999Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:04.000Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:04.073Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Ensuring bootstrap address fdb0:a840:2500:1::2 exists in switch zone
+    file = sled-agent/src/services.rs:3101
+04:26:14.008Z INFO SledAgent (ServiceManager): DEBUG INITIALIZE ZONE: Forwarding bootstrap traffic via oxBootstrap3 to fe80::8:20ff:fe27:c07b
+    file = sled-agent/src/services.rs:3108
+04:26:14.015Z INFO SledAgent (ServiceManager): DEBUG INITIALISE SWITCH ZONE: changing state of SledLocalZone
+    file = sled-agent/src/services.rs:5165
+    new state = SledLocalZone::Running
+    old state = SledLocalZone::Initializing
+    request = SwitchZoneConfig {\n    id: dc45c01c-489d-4e54-a207-b90456d82ccf,\n    addresses: [\n        fd00:1122:3344:101::2,\n        ::1,\n    ],\n    services: [\n        Dendrite {\n            asic: SoftNpuPropolisDevice,\n        },\n        Lldpd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        ManagementGatewayService,\n        Uplink,\n        Wicketd {\n            baseboard: Pc {\n                identifier: "g0",\n                model: "i86pc",\n            },\n        },\n        Mgd,\n        MgDdm {\n            mode: "transit",\n        },\n        Tfport {\n            pkt_source: "vioif0",\n            asic: SoftNpuPropolisDevice,\n        },\n        SpSim,\n    ],\n}
+    zone = RunningZone {\n    id: Some(\n        1,\n    ),\n    inner: InstalledZone {\n        log: Logger(zone, component),\n        zonepath: "/zone/oxz_switch",\n        name: "oxz_switch",\n        control_vnic: Link {\n            name: "oxControlService3",\n            deleted: false,\n            kind: OxideControlVnic,\n        },\n        bootstrap_vnic: Some(\n            Link {\n                name: "oxBootstrap3",\n                deleted: false,\n                kind: OxideBootstrapVnic,\n            },\n        ),\n        opte_ports: [],\n        links: [\n            Link {\n                name: "vioif0",\n                deleted: false,\n                kind: Physical,\n            },\n        ],\n    },\n}
+04:26:14.028Z WARN SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Failed to get switch ID from MGS (retrying in 53.373698ms)
+    error = Communication Error: error sending request for url (http://[fd00:1122:3344:101::2]:12225/local/switch-id): operation timed out
+    file = sled-agent/src/bootstrap/early_networking.rs:397
+04:26:14.028Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:14.089Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Retrieved information from MGS
+    file = sled-agent/src/bootstrap/early_networking.rs:418
+    switch location = Switch0
+    switch slot = 0
+04:26:14.089Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: We now know which switch we are on. Filter the uplinks to just ours. Retrieve all configs for ports that match port.switch == the port location we just retrieved
+    all port configs = [\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.2,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch0,\n        port: "qsfp0",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 47,\n                port: "qsfp0",\n                addr: 198.51.101.1,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.10,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch0,\n        port: "qsfp1",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 47,\n                port: "qsfp1",\n                addr: 198.51.101.9,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.6,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch1,\n        port: "qsfp0",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 48,\n                port: "qsfp0",\n                addr: 198.51.101.5,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.14,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch1,\n        port: "qsfp1",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 48,\n                port: "qsfp1",\n                addr: 198.51.101.13,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n]
+    file = sled-agent/src/bootstrap/early_networking.rs:431
+    port configs = [\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.2,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch0,\n        port: "qsfp0",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 47,\n                port: "qsfp0",\n                addr: 198.51.101.1,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.10,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch0,\n        port: "qsfp1",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 47,\n                port: "qsfp1",\n                addr: 198.51.101.9,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n]
+    switch location = Switch0
+04:26:14.117Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Created Dendrite client: 
+                 Client {
+        baseurl: "http://[fd00:1122:3344:101::2]:12224",
+        client: Client {
+            accepts: Accepts,
+            proxies: [
+                Proxy(
+                    System(
+                        {},
+                    ),
+                    None,
+                ),
+            ],
+            referer: true,
+            default_headers: {
+                "accept": "*/*",
+            },
+            timeout: 15s,
+        },
+        inner: ClientState {
+            tag: "omicron",
+            log: Logger(component, component),
+        },
+    }
+    file = sled-agent/src/bootstrap/early_networking.rs:446
+04:26:14.117Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Initializing 2 Uplinks on Switch0 at fd00:1122:3344:101::2. configure uplink for each requested uplink in configuration that matches our switch_location
+    file = sled-agent/src/bootstrap/early_networking.rs:452
+04:26:14.118Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Building Dendrite Port Configuration
+    file = sled-agent/src/bootstrap/early_networking.rs:673
+    port config = PortConfigV1 {\n    routes: [],\n    addresses: [\n        V4(\n            Ipv4Network {\n                addr: 198.51.101.2,\n                prefix: 30,\n            },\n        ),\n    ],\n    switch: Switch0,\n    port: "qsfp0",\n    uplink_port_speed: Speed100G,\n    uplink_port_fec: None,\n    bgp_peers: [\n        BgpPeerConfig {\n            asn: 47,\n            port: "qsfp0",\n            addr: 198.51.101.1,\n            hold_time: None,\n            idle_hold_time: None,\n            delay_open: None,\n            connect_retry: None,\n            keepalive: None,\n        },\n    ],\n    autoneg: false,\n}
+04:26:14.121Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Checking dendrite uptime to determine if it has come online
+    file = sled-agent/src/bootstrap/early_networking.rs:711
+04:26:14.121Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Dendrite online
+    file = sled-agent/src/bootstrap/early_networking.rs:714
+    uptime = 1
+04:26:14.121Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Configuring default uplink on switch. Apply port settings atomically. These settings will be applied holistically, and to the extent possible atomically to a given port. In the event of a failure a rollback is attempted. If the rollback fails there will be inconsistent state. This failure mode returns the error code 'rollback failure'
+    config = PortSettings {\n    links: {\n        "0": LinkSettings {\n            addrs: [\n                198.51.101.2,\n            ],\n            params: LinkCreate {\n                autoneg: false,\n                fec: None,\n                kr: false,\n                lane: Some(\n                    LinkId(\n                        0,\n                    ),\n                ),\n                speed: Speed100G,\n            },\n        },\n    },\n}
+    file = sled-agent/src/bootstrap/early_networking.rs:469
+    port id = Qsfp(\n    Qsfp(\n        "qsfp0",\n    ),\n)
+04:26:14.309Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Building Dendrite Port Configuration
+    file = sled-agent/src/bootstrap/early_networking.rs:673
+    port config = PortConfigV1 {\n    routes: [],\n    addresses: [\n        V4(\n            Ipv4Network {\n                addr: 198.51.101.10,\n                prefix: 30,\n            },\n        ),\n    ],\n    switch: Switch0,\n    port: "qsfp1",\n    uplink_port_speed: Speed100G,\n    uplink_port_fec: None,\n    bgp_peers: [\n        BgpPeerConfig {\n            asn: 47,\n            port: "qsfp1",\n            addr: 198.51.101.9,\n            hold_time: None,\n            idle_hold_time: None,\n            delay_open: None,\n            connect_retry: None,\n            keepalive: None,\n        },\n    ],\n    autoneg: false,\n}
+04:26:14.309Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Checking dendrite uptime to determine if it has come online
+    file = sled-agent/src/bootstrap/early_networking.rs:711
+04:26:14.309Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Dendrite online
+    file = sled-agent/src/bootstrap/early_networking.rs:714
+    uptime = 1
+04:26:14.309Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Configuring default uplink on switch. Apply port settings atomically. These settings will be applied holistically, and to the extent possible atomically to a given port. In the event of a failure a rollback is attempted. If the rollback fails there will be inconsistent state. This failure mode returns the error code 'rollback failure'
+    config = PortSettings {\n    links: {\n        "0": LinkSettings {\n            addrs: [\n                198.51.101.10,\n            ],\n            params: LinkCreate {\n                autoneg: false,\n                fec: None,\n                kr: false,\n                lane: Some(\n                    LinkId(\n                        0,\n                    ),\n                ),\n                speed: Speed100G,\n            },\n        },\n    },\n}
+    file = sled-agent/src/bootstrap/early_networking.rs:469
+    port id = Qsfp(\n    Qsfp(\n        "qsfp1",\n    ),\n)
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Created Maghemite (MGD) client: 
+                 Client {
+        baseurl: "http://[fd00:1122:3344:101::2]:4676",
+        client: Client {
+            accepts: Accepts,
+            proxies: [
+                Proxy(
+                    System(
+                        {},
+                    ),
+                    None,
+                ),
+            ],
+            referer: true,
+            default_headers: {
+                "accept": "*/*",
+            },
+            timeout: 15s,
+        },
+        inner: Logger(component),
+    }
+    file = sled-agent/src/bootstrap/early_networking.rs:500
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING - init_switch_config: Iterate through ports and apply BGP config.
+    file = sled-agent/src/bootstrap/early_networking.rs:509
+    ports = [\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.2,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch0,\n        port: "qsfp0",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 47,\n                port: "qsfp0",\n                addr: 198.51.101.1,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n    PortConfigV1 {\n        routes: [],\n        addresses: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.10,\n                    prefix: 30,\n                },\n            ),\n        ],\n        switch: Switch0,\n        port: "qsfp1",\n        uplink_port_speed: Speed100G,\n        uplink_port_fec: None,\n        bgp_peers: [\n            BgpPeerConfig {\n                asn: 47,\n                port: "qsfp1",\n                addr: 198.51.101.9,\n                hold_time: None,\n                idle_hold_time: None,\n                delay_open: None,\n                connect_retry: None,\n                keepalive: None,\n            },\n        ],\n        autoneg: false,\n    },\n]
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Set BGP peer configs for a port.
+    file = sled-agent/src/bootstrap/early_networking.rs:516
+    port = PortConfigV1 {\n    routes: [],\n    addresses: [\n        V4(\n            Ipv4Network {\n                addr: 198.51.101.2,\n                prefix: 30,\n            },\n        ),\n    ],\n    switch: Switch0,\n    port: "qsfp0",\n    uplink_port_speed: Speed100G,\n    uplink_port_fec: None,\n    bgp_peers: [\n        BgpPeerConfig {\n            asn: 47,\n            port: "qsfp0",\n            addr: 198.51.101.1,\n            hold_time: None,\n            idle_hold_time: None,\n            delay_open: None,\n            connect_retry: None,\n            keepalive: None,\n        },\n    ],\n    autoneg: false,\n}
+    port BGP peers = [\n    BgpPeerConfig {\n        asn: 47,\n        port: "qsfp0",\n        addr: 198.51.101.1,\n        hold_time: None,\n        idle_hold_time: None,\n        delay_open: None,\n        connect_retry: None,\n        keepalive: None,\n    },\n]
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: BGP peer config for port.
+    BGP peer config = BgpPeerConfig {\n    connect_retry: 3,\n    delay_open: 0,\n    hold_time: 6,\n    host: "198.51.101.1:179",\n    idle_hold_time: 3,\n    keepalive: 2,\n    name: "198.51.101.1",\n    passive: false,\n    resolution: 100,\n}
+    file = sled-agent/src/bootstrap/early_networking.rs:557
+    port = PortConfigV1 {\n    routes: [],\n    addresses: [\n        V4(\n            Ipv4Network {\n                addr: 198.51.101.2,\n                prefix: 30,\n            },\n        ),\n    ],\n    switch: Switch0,\n    port: "qsfp0",\n    uplink_port_speed: Speed100G,\n    uplink_port_fec: None,\n    bgp_peers: [\n        BgpPeerConfig {\n            asn: 47,\n            port: "qsfp0",\n            addr: 198.51.101.1,\n            hold_time: None,\n            idle_hold_time: None,\n            delay_open: None,\n            connect_retry: None,\n            keepalive: None,\n        },\n    ],\n    autoneg: false,\n}
+    port name = "qsfp0"
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Set BGP peer configs for a port.
+    file = sled-agent/src/bootstrap/early_networking.rs:516
+    port = PortConfigV1 {\n    routes: [],\n    addresses: [\n        V4(\n            Ipv4Network {\n                addr: 198.51.101.10,\n                prefix: 30,\n            },\n        ),\n    ],\n    switch: Switch0,\n    port: "qsfp1",\n    uplink_port_speed: Speed100G,\n    uplink_port_fec: None,\n    bgp_peers: [\n        BgpPeerConfig {\n            asn: 47,\n            port: "qsfp1",\n            addr: 198.51.101.9,\n            hold_time: None,\n            idle_hold_time: None,\n            delay_open: None,\n            connect_retry: None,\n            keepalive: None,\n        },\n    ],\n    autoneg: false,\n}
+    port BGP peers = [\n    BgpPeerConfig {\n        asn: 47,\n        port: "qsfp1",\n        addr: 198.51.101.9,\n        hold_time: None,\n        idle_hold_time: None,\n        delay_open: None,\n        connect_retry: None,\n        keepalive: None,\n    },\n]
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: BGP peer config for port.
+    BGP peer config = BgpPeerConfig {\n    connect_retry: 3,\n    delay_open: 0,\n    hold_time: 6,\n    host: "198.51.101.9:179",\n    idle_hold_time: 3,\n    keepalive: 2,\n    name: "198.51.101.9",\n    passive: false,\n    resolution: 100,\n}
+    file = sled-agent/src/bootstrap/early_networking.rs:557
+    port = PortConfigV1 {\n    routes: [],\n    addresses: [\n        V4(\n            Ipv4Network {\n                addr: 198.51.101.10,\n                prefix: 30,\n            },\n        ),\n    ],\n    switch: Switch0,\n    port: "qsfp1",\n    uplink_port_speed: Speed100G,\n    uplink_port_fec: None,\n    bgp_peers: [\n        BgpPeerConfig {\n            asn: 47,\n            port: "qsfp1",\n            addr: 198.51.101.9,\n            hold_time: None,\n            idle_hold_time: None,\n            delay_open: None,\n            connect_retry: None,\n            keepalive: None,\n        },\n    ],\n    autoneg: false,\n}
+    port name = "qsfp1"
+04:26:14.574Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Applying BGP config via Maghemite daemon (MGD).
+    apply request = ApplyRequest {\n    asn: 47,\n    originate: [\n        Prefix4 {\n            length: 24,\n            value: 198.51.100.0,\n        },\n    ],\n    peers: {\n        "qsfp0": [\n            BgpPeerConfig {\n                connect_retry: 3,\n                delay_open: 0,\n                hold_time: 6,\n                host: "198.51.101.1:179",\n                idle_hold_time: 3,\n                keepalive: 2,\n                name: "198.51.101.1",\n                passive: false,\n                resolution: 100,\n            },\n        ],\n        "qsfp1": [\n            BgpPeerConfig {\n                connect_retry: 3,\n                delay_open: 0,\n                hold_time: 6,\n                host: "198.51.101.9:179",\n                idle_hold_time: 3,\n                keepalive: 2,\n                name: "198.51.101.9",\n                passive: false,\n                resolution: 100,\n            },\n        ],\n    },\n}
+    file = sled-agent/src/bootstrap/early_networking.rs:585
+04:26:14.599Z INFO SledAgent (ServiceManager): DEBUG EARLY NETWORKING: Adding static IPv4 routes via Maghemite daemon (MGD).
+    file = sled-agent/src/bootstrap/early_networking.rs:627
+    static route request = AddStaticRoute4Request {\n    routes: StaticRoute4List {\n        list: [],\n    },\n}
+04:26:14.632Z INFO SledAgent (ServiceManager): DEBUG ENSURE SWITCH ZONE UPLINKS CONFIGURED: Ensure scrimlet host ports. Configure uplinks via DPD in our switch zone.
+    file = sled-agent/src/services.rs:4551
+    our ports = [\n    HostPortConfig {\n        port: "qsfp0",\n        addrs: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.2,\n                    prefix: 30,\n                },\n            ),\n        ],\n    },\n    HostPortConfig {\n        port: "qsfp1",\n        addrs: [\n            V4(\n                Ipv4Network {\n                    addr: 198.51.101.10,\n                    prefix: 30,\n                },\n            ),\n        ],\n    },\n]
+04:26:14.633Z INFO SledAgent (ServiceManager): DEBUG ENSURE SCRIMLET HOST PORTS: Zone in running state
+    file = sled-agent/src/services.rs:4572
+    zone = RunningZone {\n    id: Some(\n        1,\n    ),\n    inner: InstalledZone {\n        log: Logger(zone, component),\n        zonepath: "/zone/oxz_switch",\n        name: "oxz_switch",\n        control_vnic: Link {\n            name: "oxControlService3",\n            deleted: false,\n            kind: OxideControlVnic,\n        },\n        bootstrap_vnic: Some(\n            Link {\n                name: "oxBootstrap3",\n                deleted: false,\n                kind: OxideBootstrapVnic,\n            },\n        ),\n        opte_ports: [],\n        links: [\n            Link {\n                name: "vioif0",\n                deleted: false,\n                kind: Physical,\n            },\n        ],\n    },\n}
+04:26:14.633Z INFO SledAgent (ServiceManager): DEBUG ENSURE SCRIMLET HOST PORTS: Creating SmfHelper
+    file = sled-agent/src/services.rs:4593
+    service = Uplink
+    zone = RunningZone {\n    id: Some(\n        1,\n    ),\n    inner: InstalledZone {\n        log: Logger(zone, component),\n        zonepath: "/zone/oxz_switch",\n        name: "oxz_switch",\n        control_vnic: Link {\n            name: "oxControlService3",\n            deleted: false,\n            kind: OxideControlVnic,\n        },\n        bootstrap_vnic: Some(\n            Link {\n                name: "oxBootstrap3",\n                deleted: false,\n                kind: OxideBootstrapVnic,\n            },\n        ),\n        opte_ports: [],\n        links: [\n            Link {\n                name: "vioif0",\n                deleted: false,\n                kind: Physical,\n            },\n        ],\n    },\n}
+04:26:14.633Z INFO SledAgent (ServiceManager): DEBUG ENSURE SCRIMLET HOST PORTS: Delete and add property group uplinks type application in the uplink service.
+                Adding to service FMRI (not default instance)
+    file = sled-agent/src/services.rs:4600
+04:26:14.763Z INFO SledAgent (ServiceManager): DEBUG ENSURE SCRIMLET HOST PORTS: Adding property value type in the uplink service.
+                        Adding to service FMRI (not default instance)
+    command = "/usr/sbin/svccfg -s svc:/oxide/uplink addpropvalue uplinks/qsfp0_0 astring: 198.51.101.2/30"
+    file = sled-agent/src/services.rs:4615
+    property = "uplinks/qsfp0_0"
+    valtype = astring
+    value = 198.51.101.2/30
+04:26:14.799Z INFO SledAgent (ServiceManager): DEBUG ENSURE SCRIMLET HOST PORTS: Adding property value type in the uplink service.
+                        Adding to service FMRI (not default instance)
+    command = "/usr/sbin/svccfg -s svc:/oxide/uplink addpropvalue uplinks/qsfp1_0 astring: 198.51.101.10/30"
+    file = sled-agent/src/services.rs:4615
+    property = "uplinks/qsfp1_0"
+    valtype = astring
+    value = 198.51.101.10/30
+04:26:14.829Z INFO SledAgent (ServiceManager): DEBUG ENSURE SCRIMLET HOST PORTS: Refreshing uplink service
+    file = sled-agent/src/services.rs:4630
+04:26:19.030Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}
+    file = sled-agent/src/bootstrap/bootstore_setup.rs:101
+04:26:24.031Z INFO SledAgent (bootstore_ddmd_poller): DEBUG POLL DDMD FOR BOOTSTORE: peers: {}, current peers: {}

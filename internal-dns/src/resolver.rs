@@ -30,7 +30,7 @@ pub enum ResolveError {
 
 /// A wrapper around a DNS resolver, providing a way to conveniently
 /// look up IP addresses of services based on their SRV keys.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Resolver {
     log: slog::Logger,
     resolver: TokioAsyncResolver,
