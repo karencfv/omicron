@@ -41,7 +41,8 @@ impl Server {
         long_running_tasks_handles: LongRunningTaskHandles,
         services: ServiceManager,
     ) -> Result<Server, String> {
-        info!(log, "setting up sled agent server");
+        info!(log, "DEBUG SLED AGENT SERVER START: setting up sled agent server";
+        "request" => #?request, "config" => #?config);
 
         let sled_address = request.sled_address();
         let resolver = Arc::new(
@@ -55,6 +56,8 @@ impl Server {
         let nexus_client = NexusClientWithResolver::new(&log, resolver)
             .map_err(|e| e.to_string())?;
 
+        info!(log, "DEBUG SLED AGENT SERVER START: initialize a new [`SledAgent`] object.";
+            "request" => #?request, "config" => #?config);
         let sled_agent = SledAgent::new(
             &config,
             log.clone(),
@@ -66,6 +69,22 @@ impl Server {
         .await
         .map_err(|e| e.to_string())?;
 
+        info!(log, "DEBUG SLED AGENT SERVER START: initialized a new [`SledAgent`] object.";
+            "sled agent subnet" => #?sled_agent.inner.subnet,
+            "sled agent start request" => #?sled_agent.inner.start_request,
+            "sled agent port manager" => #?sled_agent.inner.port_manager,
+            "sled agent rack network config" => #?sled_agent.inner.rack_network_config,
+            "sled agent services gz local link addr" => #?sled_agent.inner.services.inner.global_zone_bootstrap_link_local_address,
+            "sled agent services sled_mode" => #?sled_agent.inner.services.inner.sled_mode,
+            "sled agent services switch_zone_maghemite_links" => #?sled_agent.inner.services.inner.switch_zone_maghemite_links,
+            "sled agent services sidecar_revision" => #?sled_agent.inner.services.inner.sidecar_revision,
+            "sled agent services underlay_vnic_allocator" => #?sled_agent.inner.services.inner.underlay_vnic_allocator,
+            "sled agent services underlay_vnic" => #?sled_agent.inner.services.inner.underlay_vnic,
+            "sled agent services bootstrap_vnic_allocator" => #?sled_agent.inner.services.inner.bootstrap_vnic_allocator,
+            "sled agent services sled_info" => #?sled_agent.inner.services.inner.sled_info,
+            "sled agent services switch_zone_bootstrap_address" => #?sled_agent.inner.services.inner.switch_zone_bootstrap_address,
+        );
+ 
         let dropshot_config = dropshot::ConfigDropshot {
             bind_address: SocketAddr::V6(sled_address),
             ..config.dropshot
@@ -77,7 +96,7 @@ impl Server {
             sled_agent,
             &dropshot_log,
         )
-        .map_err(|error| format!("initializing server: {}", error))?
+        .map_err(|error| format!("DEBUG SLED AGENT SERVER START: initializing server: {}", error))?
         .start();
 
         Ok(Server { http_server })

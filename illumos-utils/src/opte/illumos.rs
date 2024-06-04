@@ -87,7 +87,7 @@ pub fn initialize_xde_driver(
         return Err(Error::NoXdeConf);
     }
 
-    info!(log, "using '{:?}' as data links for xde driver", underlay_nics);
+    info!(log, "DEBUG INITIALIZE XDE DRIVER: using '{:?}' as data links for xde driver", underlay_nics);
     if underlay_nics.len() < 2 {
         const MESSAGE: &str = concat!(
             "There must be at least two underlay NICs for the xde ",

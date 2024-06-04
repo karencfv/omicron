@@ -261,18 +261,18 @@ impl From<InventoryError> for dropshot::HttpError {
 /// Describes an executing Sled Agent object.
 ///
 /// Contains both a connection to the Nexus, as well as managed instances.
-struct SledAgentInner {
+pub struct SledAgentInner {
     // ID of the Sled
     id: Uuid,
 
     // Subnet of the Sled's underlay.
     //
     // The Sled Agent's address can be derived from this value.
-    subnet: Ipv6Subnet<SLED_PREFIX>,
+    pub subnet: Ipv6Subnet<SLED_PREFIX>,
 
     // The request that was used to start the sled-agent
     // This is used for idempotence checks during RSS/Add-Sled internal APIs
-    start_request: StartSledAgentRequest,
+    pub start_request: StartSledAgentRequest,
 
     // Component of Sled Agent responsible for storage and dataset management.
     storage: StorageHandle,
@@ -287,10 +287,10 @@ struct SledAgentInner {
     updates: UpdateManager,
 
     // Component of Sled Agent responsible for managing OPTE ports.
-    port_manager: PortManager,
+    pub port_manager: PortManager,
 
     // Other Oxide-controlled services running on this Sled.
-    services: ServiceManager,
+    pub services: ServiceManager,
 
     // Connection to Nexus.
     nexus_client: NexusClientWithResolver,
@@ -299,7 +299,7 @@ struct SledAgentInner {
     nexus_notifier: NexusNotifierHandle,
 
     // The rack network config provided at RSS time.
-    rack_network_config: Option<RackNetworkConfig>,
+    pub rack_network_config: Option<RackNetworkConfig>,
 
     // Object managing zone bundles.
     zone_bundler: zone_bundle::ZoneBundler,
@@ -329,7 +329,7 @@ impl SledAgentInner {
 
 #[derive(Clone)]
 pub struct SledAgent {
-    inner: Arc<SledAgentInner>,
+    pub inner: Arc<SledAgentInner>,
     log: Logger,
 }
 
@@ -352,7 +352,7 @@ impl SledAgent {
             "component" => "SledAgent",
             "sled_id" => request.body.id.to_string(),
         ));
-        info!(&log, "SledAgent::new(..) starting");
+        info!(&log, "DEBUG SLED AGENT BEW: SledAgent::new(..) starting");
 
         let storage_manager = &long_running_task_handles.storage_manager;
         let boot_disk = storage_manager
@@ -381,6 +381,8 @@ impl SledAgent {
 
         info!(log, "Mounting backing filesystems");
         crate::backing_fs::ensure_backing_fs(&parent_log, &boot_disk.1)?;
+
+        // TODO: Add some logs here
 
         // TODO-correctness Bootstrap-agent already ensures the underlay
         // etherstub and etherstub VNIC exist on startup - could it pass them
