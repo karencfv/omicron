@@ -28,6 +28,8 @@ use tough::Repository;
 use tough::TargetName;
 use tufaceous_artifact::ArtifactHash;
 use tufaceous_lib::OmicronRepo;
+use update_common::artifacts::ArtifactsWithPlan;
+use update_common::artifacts::ControlPlaneZonesMode;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -77,16 +79,43 @@ impl RepoDepotStandalone {
         .context("failed to create logger")?;
 
         let mut ctx = RepoMetadata::new();
+        //    for repo_path in &self.repo_paths {
+        //        let omicron_repo =
+        //            OmicronRepo::load_untrusted_ignore_expiration(&log, repo_path)
+        //                .await
+        //                .with_context(|| {
+        //                    format!("loading repository at {repo_path}")
+        //                })?;
+        //        ctx.load_repo(omicron_repo)
+        //            .context("loading artifacts from repository at {repo_path}")?;
+        //        info!(&log, "loaded Omicron TUF repository"; "path" => %repo_path);
+        //    }
+
+        // For zipped repos
+        // TODO-K: Do I need plans?
+        // let mut plans = vec![];
         for repo_path in &self.repo_paths {
-            let omicron_repo =
-                OmicronRepo::load_untrusted_ignore_expiration(&log, repo_path)
-                    .await
-                    .with_context(|| {
-                        format!("loading repository at {repo_path}")
-                    })?;
-            ctx.load_repo(omicron_repo)
+            let zip_bytes = std::fs::File::open(&repo_path)
+                .context("error opening zipped tuf repo")?;
+            // We could also compute the hash from the file here, but the repo hash
+            // doesn't matter here.
+            let repo_hash = ArtifactHash([0u8; 32]);
+            let plan = ArtifactsWithPlan::from_zip(
+                zip_bytes,
+                None,
+                repo_hash,
+                //Some(&Utf8PathBuf::from_str("/var/tmp/zip-repo").unwrap()),
+                ControlPlaneZonesMode::Split,
+                &log,
+            )
+            .await
+            .with_context(|| format!("error reading {repo_path}"))?;
+            ctx.load_repo(plan.repository())
                 .context("loading artifacts from repository at {repo_path}")?;
+            // TODO-K: put the actual tmp repo path
             info!(&log, "loaded Omicron TUF repository"; "path" => %repo_path);
+            //  plans.push(plan);
+            // info!(&log, "ARTIFACTS WITH PLAN {:#?}", plan)
         }
 
         let my_api = repo_depot_api::repo_depot_api_mod::api_description::<
@@ -109,7 +138,8 @@ impl RepoDepotStandalone {
 /// Keeps metadata that allows us to fetch a target from any of the TUF repos
 /// based on its hash.
 struct RepoMetadata {
-    repos: Vec<OmicronRepo>,
+    //   repos: Vec<OmicronRepo>,
+    repos: Vec<Repository>,
     targets_by_hash: BTreeMap<ArtifactHash, (usize, TargetName)>,
 }
 
@@ -120,7 +150,7 @@ impl RepoMetadata {
 
     pub fn load_repo(
         &mut self,
-        omicron_repo: OmicronRepo,
+        omicron_repo: &OmicronRepo,
     ) -> anyhow::Result<()> {
         let repo_index = self.repos.len();
 
@@ -135,9 +165,15 @@ impl RepoMetadata {
                 .insert(artifact_hash, (repo_index, target_name.clone()));
         }
 
-        self.repos.push(omicron_repo);
+        self.repos.push(omicron_repo.repo().clone());
+        // TODO-K: add some logging here?
         Ok(())
     }
+
+    // pub fn load_plan(&mut self, plan: ArtifactsWithPlan) -> anyhow::Result<()> {
+    //
+    //     Ok(())
+    // }
 
     pub fn repo_and_target_name_for_hash(
         &self,
@@ -146,7 +182,8 @@ impl RepoMetadata {
         let (repo_index, target_name) =
             self.targets_by_hash.get(requested_sha)?;
         let omicron_repo = &self.repos[*repo_index];
-        Some((omicron_repo.repo(), target_name))
+        // Some((omicron_repo.repo(), target_name))
+        Some((omicron_repo, target_name))
     }
 }
 

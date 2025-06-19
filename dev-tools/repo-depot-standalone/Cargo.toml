@@ -24,6 +24,7 @@ tough.workspace = true
 tufaceous-artifact.workspace = true
 tufaceous-lib.workspace = true
 omicron-workspace-hack.workspace = true
+update-common.workspace = true
 
 [[bin]]
 name = "repo-depot-standalone"

@@ -64,6 +64,8 @@ pub struct ArtifactsWithPlan {
     rot_by_sign: DebugIgnore<HashMap<ArtifactId, Vec<u8>>>,
     // The plan to use to update a component within the rack.
     plan: UpdatePlan,
+    // TODO-K: Return repo?
+    repository: DebugIgnore<OmicronRepo>,
 }
 
 impl ArtifactsWithPlan {
@@ -162,6 +164,7 @@ impl ArtifactsWithPlan {
         //
         // XXX we aren't checking against a root of trust at this point --
         // anyone can sign the repositories and this code will accept that.
+        // TODO-K: Return repo?
         let repository =
             OmicronRepo::load_untrusted_ignore_expiration(log, dir.path())
                 .await
@@ -287,12 +290,18 @@ impl ArtifactsWithPlan {
             by_hash: by_hash.into(),
             rot_by_sign: rot_by_sign.into(),
             plan,
+            repository: debug_ignore::DebugIgnore(repository),
         })
     }
 
     /// Returns the `ArtifactsDocument` corresponding to this TUF repo.
     pub fn description(&self) -> &TufRepoDescription {
         &self.description
+    }
+
+    /// Returns the `OmicronRepo` corresponding to this TUF repo.
+    pub fn repository(&self) -> &OmicronRepo {
+        &self.repository
     }
 
     pub fn by_id(&self) -> &BTreeMap<ArtifactId, Vec<ArtifactHashId>> {

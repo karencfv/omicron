@@ -7806,6 +7806,7 @@ dependencies = [
  "tough",
  "tufaceous-artifact",
  "tufaceous-lib",
+ "update-common",
 ]
 
 [[package]]
