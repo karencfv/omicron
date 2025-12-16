@@ -1689,6 +1689,11 @@ table! {
         mupdate_override_boot_disk_path -> Text,
         mupdate_override_id -> Nullable<Uuid>,
         mupdate_override_boot_disk_error -> Nullable<Text>,
+
+        // TODO-K: Remove comment
+        // TODO-K: Is this even necessary?
+        // Foreign key that links to inv_smf_services_in_maintenance
+        health_monitor_smf_services_in_maintenance -> Nullable<Uuid>,
     }
 }
 
@@ -1710,6 +1715,29 @@ table! {
         clear_mupdate_override_non_boot_message -> Nullable<Text>,
     }
 }
+
+table! {
+    inv_health_monitor_smf_services_in_maintenance (inv_collection_id, id) {
+        inv_collection_id -> Uuid,
+        id -> Uuid,
+        error_message -> Nullable<Text>,
+        time_of_status -> Timestamptz,
+    }
+}
+
+table! {
+    inv_health_monitor_smf_services_in_maintenance_entry (inv_collection_id, smf_services_in_maintenance_id, id) {
+        inv_collection_id -> Uuid,
+        // This foreign key links to inv_smf_services_in_maintenance
+        smf_services_in_maintenance_id -> Uuid,
+        id -> Uuid,
+        fmri -> Text,
+        zone -> Text,
+    }
+}
+
+// TODO-K: Do I even need this?
+// joinable!(inv_smf_services_in_maintenance_entries -> inv_smf_services_in_maintenance (smf_services_in_maintenance_id));
 
 table! {
     inv_sled_boot_partition (inv_collection_id, sled_id, boot_disk_slot) {
@@ -1865,6 +1893,7 @@ table! {
     }
 }
 
+// TODO-K: Use this as inspiration
 table! {
     inv_omicron_sled_config (inv_collection_id, id) {
         inv_collection_id -> Uuid,

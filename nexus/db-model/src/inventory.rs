@@ -31,17 +31,19 @@ use nexus_db_schema::schema::inv_zone_manifest_zone;
 use nexus_db_schema::schema::{
     hw_baseboard_id, inv_caboose, inv_clickhouse_keeper_membership,
     inv_cockroachdb_status, inv_collection, inv_collection_error, inv_dataset,
-    inv_host_phase_1_active_slot, inv_host_phase_1_flash_hash,
-    inv_internal_dns, inv_last_reconciliation_dataset_result,
-    inv_last_reconciliation_disk_result,
+    inv_health_monitor_smf_services_in_maintenance,
+    inv_health_monitor_smf_services_in_maintenance_entry,
+    inv_host_phase_1_active_slot, inv_host_phase_1_flash_hash, inv_internal_dns,
+    inv_last_reconciliation_dataset_result, inv_last_reconciliation_disk_result,
     inv_last_reconciliation_orphaned_dataset,
-    inv_last_reconciliation_zone_result, inv_mupdate_override_non_boot,
+inv_last_reconciliation_zone_result, inv_mupdate_override_non_boot,
     inv_ntp_timesync, inv_nvme_disk_firmware, inv_omicron_sled_config,
     inv_omicron_sled_config_dataset, inv_omicron_sled_config_disk,
     inv_omicron_sled_config_zone, inv_omicron_sled_config_zone_nic,
     inv_physical_disk, inv_root_of_trust, inv_root_of_trust_page,
     inv_service_processor, inv_sled_agent, inv_sled_boot_partition,
-    inv_sled_config_reconciler, inv_zpool, sw_caboose, sw_root_of_trust_page,
+    inv_sled_config_reconciler, inv_zpool, sw_caboose,
+    sw_root_of_trust_page,
 };
 use nexus_sled_agent_shared::inventory::BootImageHeader;
 use nexus_sled_agent_shared::inventory::BootPartitionDetails;
@@ -913,6 +915,9 @@ pub struct InvSledAgent {
     pub reservoir_size: ByteCount,
     // Soft foreign key to an `InvOmicronSledConfig`
     pub ledgered_sled_config: Option<DbTypedUuid<OmicronSledConfigKind>>,
+    // Soft foreign key to an `InvSledHealthMonitor`
+    #[diesel(embed)]
+    pub health_monitor: InvSledHealthMonitor,
 
     #[diesel(embed)]
     pub reconciler_status: InvConfigReconcilerStatus,
@@ -1059,6 +1064,7 @@ impl InvSledConfigReconciler {
         }
     }
 
+    // TODO-K: Use this as inspiration
     pub fn boot_disk(&self) -> anyhow::Result<Result<M2Slot, String>> {
         match (self.boot_disk_slot.as_deref(), self.boot_disk_error.as_ref()) {
             (Some(0), None) => Ok(Ok(M2Slot::A)),
@@ -1093,6 +1099,37 @@ impl InvSledConfigReconciler {
             }
         }
     }
+}
+
+// TODO-K: Fix docs
+/// See [`nexus_sled_agent_shared::inventory::HealthMonitorInventory`].
+#[derive(Queryable, Clone, Debug, Selectable, Insertable)]
+#[diesel(table_name = inv_sled_agent)]
+pub struct InvSledHealthMonitor {
+    health_monitor_smf_services_in_maintenance: Option<Uuid>,
+    // TODO-K: Add more health checks here
+}
+
+/// See [`illumos_utils::svcs::SvcsInMaintenanceResult`].
+#[derive(Queryable, Clone, Debug, Selectable, Insertable)]
+#[diesel(table_name = inv_health_monitor_smf_services_in_maintenance)]
+pub struct InvSvcsInMaintenanceResult {
+    pub inv_collection_id: DbTypedUuid<CollectionKind>,
+    pub id: Uuid, // TODO-K: change for DbTypedUuid<BlahBlahKind>,
+    pub error_message: Option<String>,
+    pub time_of_status: DateTime<Utc>,
+}
+
+/// See [`illumos_utils::svcs::SvcInMaintenance`].
+#[derive(Queryable, Clone, Debug, Selectable, Insertable)]
+#[diesel(table_name = inv_health_monitor_smf_services_in_maintenance_entry)]
+pub struct InvSvcInMaintenance {
+    pub inv_collection_id: DbTypedUuid<CollectionKind>,
+    // This foreign key links to inv_smf_services_in_maintenance
+    pub smf_services_in_maintenance_id: Uuid, // TODO-K: change for DbTypedUuid<BlahBlahKind>,
+    pub id: Uuid, // TODO-K: change for DbTypedUuid<BlahBlahKind>,
+    pub fmri: String,
+    pub zone: String,
 }
 
 // See [`nexus_sled_agent_shared::inventory::DbRemoveMupdateOverrideBootSuccess`].
@@ -1330,6 +1367,8 @@ impl InvSledAgent {
                 ledgered_sled_config: ledgered_sled_config.map(From::from),
                 reconciler_status,
                 zone_image_resolver,
+                // TODO-K: Add something here that actually makes sense
+                health_monitor: InvSledHealthMonitor { health_monitor_smf_services_in_maintenance: None },
             })
         }
     }

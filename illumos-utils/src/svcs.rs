@@ -58,6 +58,7 @@ impl Svcs {
 #[serde(rename_all = "snake_case")]
 pub struct SvcsInMaintenanceResult {
     pub services: Vec<SvcInMaintenance>,
+    // TODO-K: This shouldn't be an Option?
     pub time_of_status: Option<DateTime<Utc>>,
 }
 
