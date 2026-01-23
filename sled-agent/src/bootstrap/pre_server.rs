@@ -404,6 +404,7 @@ impl BootstrapNetworking {
             Dladm::ensure_etherstub_vnic(&underlay_etherstub).await?;
 
         Ok(Self {
+            // TODO-K: Which one of these can I use to talk to an API?
             bootstrap_etherstub,
             global_zone_bootstrap_ip,
             global_zone_bootstrap_link_local_ip,

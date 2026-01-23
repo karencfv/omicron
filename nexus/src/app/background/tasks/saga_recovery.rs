@@ -451,6 +451,7 @@ impl<N: MakeSagaContext> SagaRecoveryInner<N> {
     }
 }
 
+// TODO-K: Do something like this for recovering running sagas
 /// List all in-progress sagas assigned to the given SEC
 async fn list_sagas_in_progress(
     opctx: &OpContext,

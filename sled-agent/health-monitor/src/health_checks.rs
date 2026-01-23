@@ -12,6 +12,39 @@ use tokio::time::Duration;
 use tokio::time::MissedTickBehavior;
 use tokio::time::interval;
 
+pub(crate) async fn _poll_stale_running_sagas(
+    log: Logger,
+    // TODO-K: Actually return a StaleRunningSagasResult type
+    stale_running_sagas_tx: watch::Sender<
+        Result<String, String>,
+    >,
+) {
+    // We poll every minute to verify how long sagas have been running. This
+    // interval is arbitrary.
+    let mut interval = interval(Duration::from_secs(60));
+
+    // If one of these calls to retrieve saga information takes longer than a
+    // minute, `MissedTickBehavior::Skip` ensures that the health check happens
+    // every interval, rather than bursting.
+    interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+
+    loop {
+        interval.tick().await;
+        match Svcs::in_maintenance(&log).await {
+            // There isn't anything waiting for changes because we only look at
+            // the health check status when an inventory request comes in. This
+            // means we can safely use `send_modify` instead of
+            // `send_if_modified()`.
+            Err(e) => stale_running_sagas_tx.send_modify(|status| {
+                *status = Err(e.to_string());
+            }),
+            Ok(svcs) => stale_running_sagas_tx.send_modify(|status| {
+                *status = Ok("some saga data".to_string());
+            }),
+        };
+    }
+}
+
 pub(crate) async fn poll_smf_services_in_maintenance(
     log: Logger,
     smf_services_in_maintenance_tx: watch::Sender<

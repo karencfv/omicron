@@ -116,6 +116,8 @@ pub trait NexusLockstepApi {
 
     // Debug interfaces for sagas
 
+    // TODO-K: Add an endpoint here?
+    // But it would only retrieve info about one Nexus, not all
     /// List sagas
     #[endpoint {
         method = GET,
